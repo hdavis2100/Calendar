@@ -168,6 +168,9 @@
                 if (eventsByDate[cellDateKey] === undefined) {
                     continue;
                 }
+                eventsByDate[cellDateKey].sort( (a,b) => {
+                    return a.time.localeCompare(b.time);
+                });
                 for(let e in eventsByDate[cellDateKey]) {
                     let event = eventsByDate[cellDateKey][e];
                     let eventDiv = document.createElement("div");
