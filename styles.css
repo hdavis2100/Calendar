@@ -1,0 +1,17 @@
+table, th, td {
+    border: 1px solid black;
+}
+table {
+    border-collapse: collapse;
+    width: 90%;
+}
+th, td {
+    padding: 5px;
+    text-align: left;
+    vertical-align: top;
+    height: 150px;
+    overflow-y: scroll;
+}
+th {
+    height: 20px;
+}

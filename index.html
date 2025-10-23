@@ -27,8 +27,7 @@
     <label for="logoutButton">Logout:</label>
     <button id="logoutButton">Logout</button>
     </div>
-    <button id="next_month_btn">Next Month</button>
-    <button id="prev_month_btn">Previous Month</button>
+    
 
     <label id="calendarLabel" for="calendar"></label>
     <table id="calendar">
@@ -64,6 +63,7 @@
         updateCalendar(); // Whenever the month is updated, we'll need to re-render the calendar in HTML
         
     }, false);
+    
     document.getElementById("prev_month_btn").addEventListener("click", function(event){
         currentMonth = currentMonth.prevMonth(); 
         updateCalendar(); 
