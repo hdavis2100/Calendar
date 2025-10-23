@@ -4,7 +4,7 @@ header('Content-Type: application/json');
 session_start();
 if (!isset($_SESSION['username'])) {
     echo json_encode(array(
-        "events" => []
+        "success" => false,
     ));
 
     exit;
@@ -15,6 +15,25 @@ $eventId = $json_obj['id'];
 $newTitle = $json_obj['newTitle'];
 $newDate = $json_obj['newDate'];
 $newTime = $json_obj['newTime'];
+if (!preg_match('/^[A-Za-z0-9 ]{0,30}$/', $newTitle) && $newTitle) {
+    echo json_encode(array(
+        "success" => false,
+    ));
+    exit;
+}
+
+if (!preg_match('/^\d{1,}-\d{1,}-\d{1,}$/', $newDate) && $newDate) {
+    echo json_encode(array(
+        "success" => false,
+    ));
+    exit;
+}
+if (!preg_match('/^\d{1,2}:\d{2}$/', $newTime) && $newTime) {
+    echo json_encode(array(
+        "success" => false,
+    ));
+    exit;
+}
 
 
 require 'database.php';
@@ -29,6 +48,7 @@ $stmt->execute();
 $stmt->bind_result($currentTitle, $currentDate, $currentTime);
 $stmt->fetch();
 $stmt->close();
+
 
 if (!$newTitle) {
     $newTitle = $currentTitle;
