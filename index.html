@@ -93,21 +93,7 @@
 
     };
 
-    getEventsByDate = function(year, month, day) {
-        
-        fetch("getEventsByDate.php", {
-            method: 'POST',
-            body: JSON.stringify({ 'year': year, 'month': month, 'day': day }),
-            headers: { 'content-type': 'application/json' }
-        
-        })
-        .then(response => response.json())
-        .then(data => {
-            return data.events;
-        })
-        .catch(error => console.error('Error:',error))
-        
-    };
+    
 
     // Change the month when the "next" button is pressed
     document.getElementById("next_month_btn").addEventListener("click", function(event){
@@ -126,36 +112,88 @@
     // This updateCalendar() function only alerts the dates in the currently specified month.  You need to write
     // it to modify the DOM (optionally using jQuery) to display the days and weeks in the current month.
     function updateCalendar(){
-        document.getElementById("calendarLabel").innerText = currentMonth.month + " " + currentMonth.year;
+        document.getElementById("calendarLabel").innerText = (currentMonth.month + 1) + " " + currentMonth.year;
         let weeks = currentMonth.getWeeks();
         let calBody = document.getElementById("calBody");
         calBody.innerHTML = ""; 
-
+        dates = [];
+        eventsByDate = {};
         for(let w in weeks){
             let days = weeks[w].getDates();
             
-            const row = document.createElement("tr");
+            
 
             
             
             for(let d in days){
+                val = days[d].getFullYear() + "-" + (days[d].getMonth()) + "-" + days[d].getDate();
+                eventsByDate[val] = [];
+
+                if (days[d].getMonth() != currentMonth.month) {
+                    continue;
+                }
+
+                dates.push([days[d].getFullYear(), days[d].getMonth() + 1, days[d].getDate()]);
+                
+            }
+        }
+
+        fetch("getEvents.php", {
+            method: 'POST',
+            body: JSON.stringify(dates),
+            headers: { 'content-type': 'application/json' }
+        
+        })
+        .then(response => response.json())
+        .then(data => {
+            for(let e in data.events) {
+                let event = data.events[e];
+                let date = event.year + "-" + event.month + "-" + event.day;
+                let title = event.title;
+                let time = event.time;
+                eventsByDate[date].push({ 'title': title, 'time': time });
+                
+            }
+            for(let w in weeks){
+            let days = weeks[w].getDates();
+
+            const row = document.createElement("tr");
+            for(let d in days){
+
                 const cell = document.createElement("td");
                 cell.innerText = days[d].getDate();
-                events = getEventsByDate(days[d].getFullYear(), days[d].getMonth(), days[d].getDate());
-                
-                for(let e in events){
-                    const eventDiv = document.createElement("div");
-                    title = events[e].title;
-                    time = events[e].time;
-                    eventDiv.innerText = time + " " + title;
+                let cellDateKey = days[d].getFullYear() + "-" + (days[d].getMonth()) + "-" + days[d].getDate();
+                if (eventsByDate[cellDateKey] === undefined) {
+                    continue;
+                }
+                for(let e in eventsByDate[cellDateKey]) {
+                    let event = eventsByDate[cellDateKey][e];
+                    let eventDiv = document.createElement("div");
+                    eventDiv.innerText = event.time + " - " + event.title;
                     cell.appendChild(eventDiv);
                 }
+                
+                
+                
                 row.appendChild(cell);
                 
             }
             calBody.appendChild(row);
         }
+        })
+        .catch(error => console.error('Error:',error));
+
     }
+
+        
+        
+        
+        
+        
+        
+    
+        
+    
     let setContent = function() {
         
         fetch("setContent.php", {

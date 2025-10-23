@@ -30,6 +30,9 @@ if(!$stmt){
 $stmt->bind_param('ssss', $username, $title, $date, $time);
 $stmt->execute();
 $stmt->close();
+echo json_encode(array(
+    "success" => true
+));
 
 exit();
 ?>
