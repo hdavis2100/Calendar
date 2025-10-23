@@ -54,3 +54,5 @@ $stmt->close();
 echo json_encode(array(
     "success" => true
 ));
+exit();
+?>
