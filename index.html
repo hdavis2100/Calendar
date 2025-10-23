@@ -28,7 +28,7 @@
     <button id="logoutButton">Logout</button>
     </div>
     
-
+    <!-- Store Calendar as Grid -->
     <label id="calendarLabel" for="calendar"></label>
     <table id="calendar">
         <thead>
@@ -43,6 +43,7 @@
             </tr>
         </thead>
         <tbody id="calBody">
+            <!-- Populate in js -->
             
         </tbody>
         <button id="prev_month_btn">Previous Month</button>
@@ -62,6 +63,8 @@
         <button id="addEventButton">Add Event</button>
 
     </div>
+
+    <!-- Form to edit event details. Each event given edit button which pulls data from this form and updates by eventId on click-->
     <div id="editEventForm">
         <p> Edit an Event: Enter Updated details below and click the edit button for your desired event to edit. If you want to leave a field unchanged, just leave it blank.</p>
         <label for="editEventTitle">New Event Title:</label>
@@ -79,6 +82,7 @@
         // For our purposes, we can keep the current month in a variable in the global scope
     let currentMonth = new Month(new Date().getFullYear(), new Date().getMonth()); // Current month
     
+    // Get event data from input and send to addEvent.php to store in database
     addEvent = function() {
         const title = document.getElementById("eventTitle").value;
         const date = document.getElementById("eventDate").value;
@@ -91,7 +95,9 @@
         
         })
         .then(response => response.json())
-        .then( () => 
+        .then( () =>
+        
+        // Display updated calendar and clear input fields
         updateCalendar(),
         document.getElementById("eventTitle").value = "",
         document.getElementById("eventDate").value = "",
@@ -112,30 +118,30 @@
         
     }, false);
     
+    // Change the month when the "previous" button is pressed
     document.getElementById("prev_month_btn").addEventListener("click", function(event){
         currentMonth = currentMonth.prevMonth(); 
-        updateCalendar(); 
+        updateCalendar(); // Whenever the month is updated, we'll need to re-render the calendar in HTML
         
     }, false);
 
 
-    // This updateCalendar() function only alerts the dates in the currently specified month.  You need to write
-    // it to modify the DOM (optionally using jQuery) to display the days and weeks in the current month.
+    // Populates the calendar. Gets all dates using calendarMin.js, fetches events for those dates, and maps each valid date to corresponding events to be displayed
     function updateCalendar(){
         document.getElementById("calendarLabel").innerText = (currentMonth.month + 1) + " " + currentMonth.year;
         let weeks = currentMonth.getWeeks();
         let calBody = document.getElementById("calBody");
         calBody.innerHTML = ""; 
+        
+        // dates will hold all dates in the current month to be sent to getEvents.php and eventsByDate will map dates to their corresponding events
         dates = [];
         eventsByDate = {};
         for(let w in weeks){
             let days = weeks[w].getDates();
             
-            
-
-            
-            
             for(let d in days){
+                
+                // Dates are stored in the "val" format in database
                 val = days[d].getFullYear() + "-" + (days[d].getMonth()) + "-" + days[d].getDate();
                 eventsByDate[val] = [];
 
@@ -156,8 +162,12 @@
         })
         .then(response => response.json())
         .then(data => {
+
+            // Map each date to its corresponding events
             for(let e in data.events) {
                 let event = data.events[e];
+
+                // Date not formatted via php due to off by 1 month adjustment. Reformat here for key access
                 let date = event.year + "-" + event.month + "-" + event.day;
                 let title = event.title;
                 let time = event.time;
@@ -177,9 +187,13 @@
                 if (eventsByDate[cellDateKey] === undefined) {
                     continue;
                 }
+
+                // Sort events by time before displaying
                 eventsByDate[cellDateKey].sort( (a,b) => {
                     return a.time.localeCompare(b.time);
                 });
+
+                // Create a div for each event along with delete and edit buttons
                 for(let e in eventsByDate[cellDateKey]) {
                     let event = eventsByDate[cellDateKey][e];
                     let eventDiv = document.createElement("div");
@@ -187,6 +201,7 @@
                     let delButton = document.createElement("button");
                     delButton.innerText = "Delete";
                     
+                    // Delete and update by stored event id
                     delButton.addEventListener("click", function() {
                         let data = { 'id': event.id };
                         fetch("deleteEvent.php", {
@@ -204,9 +219,13 @@
                     let editButton = document.createElement("button");
                     editButton.innerText = "Edit";
                     editButton.addEventListener("click", function() {
+
+                        // Get new event fields from edit event inputs
                         const newTitle = document.getElementById("editEventTitle").value;
                         const newDate = document.getElementById("editEventDate").value;
                         const newTime = document.getElementById("editEventTime").value;
+
+                        // Blank fields handled in editEvent.php
                         let data = { 'id': event.id, 'newTitle': newTitle,  'newDate': newDate, 'newTime': newTime };
                         fetch("editEvent.php", {
                             method: 'POST',
@@ -247,6 +266,8 @@
         
     
     let setContent = function() {
+
+        // Reset current month on login/logout/refresh
         currentMonth = new Month(new Date().getFullYear(), new Date().getMonth());
         
         fetch("setContent.php", {
@@ -256,6 +277,8 @@
         })
         .then(response => response.json())
         .then(data => {
+
+            // Show content based on login status
             if(data.success) {
                 document.getElementById("loginForm").hidden = true;
                 document.getElementById("createAccountForm").hidden = true;
@@ -284,10 +307,14 @@
 
                 document.getElementById("logoutForm").hidden = true;
             }
+
+            // Populate Calendar
             updateCalendar();
         })
         .catch(error => console.error('Error:',error))
     };
+
+    // Populate content on page load
     document.addEventListener("DOMContentLoaded", setContent, false);
 
     let login = function() {
@@ -339,6 +366,8 @@
         
 
     };
+
+    
     document.getElementById("loginbutton").addEventListener("click", login, false);
     document.getElementById("createAccountButton").addEventListener("click", createAccount, false);
     document.getElementById("logoutButton").addEventListener("click", logout, false);

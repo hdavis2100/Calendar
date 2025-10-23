@@ -11,17 +11,33 @@ $title = $json_obj['title'];
 $date = $json_obj['date'];
 $time = $json_obj['time'];
 $username = $_SESSION['username'];
-if (!preg_match('/^[A-Za-z0-9 ]{0,30}$/', $title)) {
+
+// Title must be alphanumeric and max 30 chars
+if (!preg_match('/^[A-Za-z0-9 ]{0,30}$/', $newTitle) && $newTitle) {
+    echo json_encode(array(
+        "success" => false,
+    ));
     exit;
 }
 
-if (!preg_match('/^\d{1,}-\d{1,}-\d{1,}$/', $date)) {
+// Date must be in year-month-day format
+if (!preg_match('/^[1-9]\d{1,}-[1-9]\d{0,1}-[1-9]\d{0,1}$/', $newDate) && $newDate) {
+    echo json_encode(array(
+        "success" => false,
+    ));
     exit;
 }
-if (!preg_match('/^\d{1,2}:\d{2}$/', $time)) {
+
+// Time must be in hour:minute format
+if (!preg_match('/^\d{1,2}:\d{2}$/', $newTime) && $newTime) {
+    echo json_encode(array(
+        "success" => false,
+    ));
     exit;
 }
 require 'database.php';
+
+// Insert event into database
 $stmt = $mysqli->prepare("INSERT INTO events (username, title, date, time) VALUES (?, ?, ?, ?)");
 if(!$stmt){
     printf("Query Prep Failed: %s\n", $mysqli->error);

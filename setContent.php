@@ -1,4 +1,6 @@
 <?php
+
+// Indicate to js if user is logged in to handle setting content
 header("Content-Type: application/json");
 session_start();
 if (isset($_SESSION['username'])) {
