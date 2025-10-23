@@ -45,11 +45,17 @@
                 document.getElementById("loginForm").hidden = true;
                 document.getElementById("createAccountForm").hidden = true;
                 document.getElementById("logoutForm").hidden = false;
+
                 
             } 
             else {
                 document.getElementById("loginForm").hidden = false;
+                document.getElementById("usernameinput").value = "";
+                document.getElementById("passwordinput").value = "";
+                document.getElementById("createAccountUsername").value = "";
+                document.getElementById("createAccountPassword").value = "";
                 document.getElementById("createAccountForm").hidden = false;
+
                 document.getElementById("logoutForm").hidden = true;
             }
         })
