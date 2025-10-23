@@ -35,7 +35,7 @@ for ($i=0; $i< count($json_obj); $i++) {
     while ($row = $result->fetch_assoc()) {
         array_push($events, array(
             "year" => $year,
-            "month" => $month,
+            "month" => $month - 1,
             "day" => $day,
             "title" => $row['title'],
             "time" => $row['time']
