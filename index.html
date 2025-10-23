@@ -195,6 +195,7 @@
         
     
     let setContent = function() {
+        currentMonth = new Month(new Date().getFullYear(), new Date().getMonth());
         
         fetch("setContent.php", {
             method: 'GET',
