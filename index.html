@@ -69,8 +69,9 @@
         })
         .then(response => response.json())
         .then(data => console.log(data.success ? "You've been logged in!" : `You were not logged in ${data.message}`))
+        .then( () => setContent())
         .catch(error => console.error('Error:',error))
-        setContent();
+        
 
     };
     
@@ -86,8 +87,9 @@
         })
         .then(response => response.json())
         .then(data => console.log(data.success ? "Account created successfully!" : `Account creation failed: ${data.message}`))
+        .then( () => setContent())
         .catch(error => console.error('Error:',error))
-        setContent();
+        
 
     };
 
@@ -99,8 +101,9 @@
         })
         .then(response => response.json())
         .then(data => console.log(data.success ? "You've been logged out!" : `You were not logged out ${data.message}`))
+        .then( () => setContent())
         .catch(error => console.error('Error:',error))
-        setContent();
+        
 
     };
     document.getElementById("loginbutton").addEventListener("click", login, false);
