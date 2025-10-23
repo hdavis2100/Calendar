@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Calculator</title>
+    <link rel="stylesheet" href="styles.css"/>
+
+</head>
+<body>
+    
+    <label for="usernameinput">Username:</label>
+    <input type="text" name="username" id="usernameinput" />
+    <label for="passwordinput"> Password</label>
+    <input type="password" name="password" id="passwordinput" />
+    <button id="loginbutton">Login</button>
+
+    <label for="createAccount">Create Account:</label>
+    <input type="text" name="createAccountUsername" id="createAccountUsername" />
+    <label for="createAccountPassword"> Password</label>
+    <input type="password" name="createAccountPassword" id="createAccountPassword" />
+    <button id="createAccountButton">Create Account</button>
+
+</body>
+</html>
+
+<script>
+    let login = function() {
+        const username = document.getElementById("usernameinput").value;
+        const password = document.getElementById("passwordinput").value;
+        const data = { 'username': username, 'password': password };
+        fetch("login.php", {
+            method: 'POST',
+            body: JSON.stringify(data),
+            headers: { 'content-type': 'application/json' }
+        
+        })
+        .then(response => response.json())
+        .then(data => console.log(data.success ? "You've been logged in!" : `You were not logged in ${data.message}`))
+        .catch(error => console.error('Error:',error))
+
+    };
+    
+    let createAccount = function() {
+        const username = document.getElementById("createAccountUsername").value;
+        const password = document.getElementById("createAccountPassword").value;
+        const data = { 'username': username, 'password': password };
+        fetch("storeNewUser.php", {
+            method: 'POST',
+            body: JSON.stringify(data),
+            headers: { 'content-type': 'application/json' }
+        
+        })
+        .then(response => response.json())
+        .then(data => console.log(data.success ? "Account created successfully!" : `Account creation failed: ${data.message}`))
+        .catch(error => console.error('Error:',error))
+
+    };
+    document.getElementById("loginbutton").addEventListener("click", login, false);
+    document.getElementById("createAccountButton").addEventListener("click", createAccount, false);
+
+</script>

@@ -1,15 +1,17 @@
 <?php
+header("Content-Type: application/json");
+$json_str = file_get_contents('php://input');
+$json_obj = json_decode($json_str, true);
+$username = $json_obj['username'];
+$password = $json_obj['password'];
 
-session_start();
+
 require 'database.php';
 
 
-// Check page authorization
-if( !isset($_POST['username']) ){
-    header("Location: index.php");
-    exit();
-}
-$username = $_POST['username'];
+
+
+
 
 // Prepare and execute query to get hashed password for the given username
 
@@ -24,27 +26,37 @@ $stmt->bind_result($hashed_password);
 
 if (!$stmt->fetch()) {
     // Username not found
-    $_SESSION['found'] = false;
+    echo json_encode(array(
+		"success" => false,
+		"message" => "Incorrect Username or Password"
+	));
+    $stmt->close();
+	exit;
     
-    header("Location: index.php");
-    exit();
 }
+
+
+
 $stmt->close();
 
 // Check if password matches
 
-if(!password_verify($_POST['password'], $hashed_password)){
-    $_SESSION['found'] = false;
-    header("Location: index.php");
-    exit();
+if(!password_verify($password, $hashed_password)){
+    echo json_encode(array(
+		"success" => false,
+		"message" => "Incorrect Username or Password"
+	));
+	exit;
 }
 
 
-// Login successful, set session variables and redirect to news.php
+// Login successful, set session variables
+session_start();
 $_SESSION['username'] = $username;
-$_SESSION['guest'] = false;
 $_SESSION['token'] = bin2hex(random_bytes(32));
 
-header("Location: news.php"); 
+echo json_encode(array(
+    "success" => true,
+));
 exit();
 ?>
