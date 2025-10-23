@@ -62,9 +62,15 @@
         <button id="addEventButton">Add Event</button>
 
     </div>
-</body>
-</html>
-<script src="calendarMin.js"></script>
+    <div id="editEventForm">
+        <p> Edit an Event: Enter Updated details below and click the edit button for your desired event to edit. If you want to leave a field unchanged, just leave it blank.</p>
+        <label for="editEventTitle">New Event Title:</label>
+        <input type="text" id="editEventTitle" />
+        <label for ="editEventDate">New Event Date:</label>
+        <input type="text" id="editEventDate" />
+        <label for="editEventTime">New Event Time:</label>
+        <input type="text" id="editEventTime" />
+        <button id="editEventButton">Edit Event</button>
 
 <script>
         // For our purposes, we can keep the current month in a variable in the global scope
@@ -191,6 +197,28 @@
                         .catch(error => console.error('Error:',error))
                     }, false);
                     eventDiv.appendChild(delButton);
+                    
+                    let editButton = document.createElement("button");
+                    editButton.innerText = "Edit";
+                    editButton.addEventListener("click", function() {
+                        const newTitle = document.getElementById("editEventTitle").value;
+                        const newDate = document.getElementById("editEventDate").value;
+                        const newTime = document.getElementById("editEventTime").value;
+                        let data = { 'id': event.id, 'newTitle': newTitle,  'newDate': newDate, 'newTime': newTime };
+                        fetch("editEvent.php", {
+                            method: 'POST',
+                            body: JSON.stringify(data),
+                            headers: { 'content-type': 'application/json' }
+                        
+                        })
+                        .then(response => response.json())
+                        .then(() => {
+                            updateCalendar();
+                        })
+                        .catch(error => console.error('Error:', error));
+
+                    });
+                    eventDiv.appendChild(editButton);
                     cell.appendChild(eventDiv);
                 }
                 
@@ -233,6 +261,10 @@
                 document.getElementById("eventTitle").value = "";
                 document.getElementById("eventDate").value = "";
                 document.getElementById("eventTime").value = "";
+                document.getElementById("editEventForm").hidden = false;
+                document.getElementById("editEventTitle").value = "";
+                document.getElementById("editEventDate").value = "";
+                document.getElementById("editEventTime").value = "";
                 
 
             }
@@ -244,6 +276,7 @@
                 document.getElementById("createAccountPassword").value = "";
                 document.getElementById("createAccountForm").hidden = false;
                 document.getElementById("addEventForm").hidden = true;
+                document.getElementById("editEventForm").hidden = true;
 
 
                 document.getElementById("logoutForm").hidden = true;
