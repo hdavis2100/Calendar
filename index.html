@@ -27,11 +27,74 @@
     <label for="logoutButton">Logout:</label>
     <button id="logoutButton">Logout</button>
     </div>
+    <button id="next_month_btn">Next Month</button>
+    <button id="prev_month_btn">Previous Month</button>
+
+    <label id="calendarLabel" for="calendar"></label>
+    <table id="calendar">
+        <thead>
+            <tr>
+                <th>Sun</th>
+                <th>Mon</th>
+                <th>Tue</th>
+                <th>Wed</th>
+                <th>Thu</th>
+                <th>Fri</th>
+                <th>Sat</th>
+            </tr>
+        </thead>
+        <tbody id="calBody">
+            
+        </tbody>
+        <button id="prev_month_btn">Previous Month</button>
+        <button id="next_month_btn">Next Month</button>
+
+    </table>
 </body>
 </html>
+<script src="calendarMin.js"></script>
 
 <script>
-    
+        // For our purposes, we can keep the current month in a variable in the global scope
+    let currentMonth = new Month(new Date().getFullYear(), new Date().getMonth()); // Current month
+
+    // Change the month when the "next" button is pressed
+    document.getElementById("next_month_btn").addEventListener("click", function(event){
+        currentMonth = currentMonth.nextMonth(); // Previous month would be currentMonth.prevMonth()
+        updateCalendar(); // Whenever the month is updated, we'll need to re-render the calendar in HTML
+        
+    }, false);
+    document.getElementById("prev_month_btn").addEventListener("click", function(event){
+        currentMonth = currentMonth.prevMonth(); 
+        updateCalendar(); 
+        
+    }, false);
+
+
+    // This updateCalendar() function only alerts the dates in the currently specified month.  You need to write
+    // it to modify the DOM (optionally using jQuery) to display the days and weeks in the current month.
+    function updateCalendar(){
+        document.getElementById("calendarLabel").innerText = currentMonth.month + " " + currentMonth.year;
+        let weeks = currentMonth.getWeeks();
+        let calBody = document.getElementById("calBody");
+        calBody.innerHTML = ""; 
+
+        for(var w in weeks){
+            var days = weeks[w].getDates();
+            
+            const row = document.createElement("tr");
+
+            
+            
+            for(var d in days){
+                const cell = document.createElement("td");
+                cell.innerText = days[d].getDate();
+                row.appendChild(cell);
+                
+            }
+            calBody.appendChild(row);
+        }
+    }
     let setContent = function() {
         
         fetch("setContent.php", {
@@ -45,6 +108,7 @@
                 document.getElementById("loginForm").hidden = true;
                 document.getElementById("createAccountForm").hidden = true;
                 document.getElementById("logoutForm").hidden = false;
+                
 
                 
             } 
@@ -58,6 +122,7 @@
 
                 document.getElementById("logoutForm").hidden = true;
             }
+            updateCalendar();
         })
         .catch(error => console.error('Error:',error))
     };
