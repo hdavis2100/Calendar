@@ -7,23 +7,56 @@
 
 </head>
 <body>
-    
+    <div id="loginForm">
     <label for="usernameinput">Username:</label>
     <input type="text" name="username" id="usernameinput" />
     <label for="passwordinput"> Password</label>
     <input type="password" name="password" id="passwordinput" />
     <button id="loginbutton">Login</button>
+    </div>
 
+    <div id="createAccountForm">
     <label for="createAccount">Create Account:</label>
     <input type="text" name="createAccountUsername" id="createAccountUsername" />
     <label for="createAccountPassword"> Password</label>
     <input type="password" name="createAccountPassword" id="createAccountPassword" />
     <button id="createAccountButton">Create Account</button>
-
+    </div>
+    
+    <div id="logoutForm">
+    <label for="logoutButton">Logout:</label>
+    <button id="logoutButton">Logout</button>
+    </div>
 </body>
 </html>
 
 <script>
+    
+    let setContent = function() {
+        
+        fetch("setContent.php", {
+            method: 'GET',
+            headers: { 'content-type': 'application/json' }
+        
+        })
+        .then(response => response.json())
+        .then(data => {
+            if(data.success) {
+                document.getElementById("loginForm").hidden = true;
+                document.getElementById("createAccountForm").hidden = true;
+                document.getElementById("logoutForm").hidden = false;
+                
+            } 
+            else {
+                document.getElementById("loginForm").hidden = false;
+                document.getElementById("createAccountForm").hidden = false;
+                document.getElementById("logoutForm").hidden = true;
+            }
+        })
+        .catch(error => console.error('Error:',error))
+    };
+    document.addEventListener("DOMContentLoaded", setContent, false);
+
     let login = function() {
         const username = document.getElementById("usernameinput").value;
         const password = document.getElementById("passwordinput").value;
@@ -37,6 +70,7 @@
         .then(response => response.json())
         .then(data => console.log(data.success ? "You've been logged in!" : `You were not logged in ${data.message}`))
         .catch(error => console.error('Error:',error))
+        setContent();
 
     };
     
@@ -53,9 +87,25 @@
         .then(response => response.json())
         .then(data => console.log(data.success ? "Account created successfully!" : `Account creation failed: ${data.message}`))
         .catch(error => console.error('Error:',error))
+        setContent();
+
+    };
+
+    let logout = function() {
+        fetch("logout.php", {
+            method: 'POST',
+            headers: { 'content-type': 'application/json' }
+        
+        })
+        .then(response => response.json())
+        .then(data => console.log(data.success ? "You've been logged out!" : `You were not logged out ${data.message}`))
+        .catch(error => console.error('Error:',error))
+        setContent();
 
     };
     document.getElementById("loginbutton").addEventListener("click", login, false);
     document.getElementById("createAccountButton").addEventListener("click", createAccount, false);
+    document.getElementById("logoutButton").addEventListener("click", logout, false);
+    
 
 </script>
