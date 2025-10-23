@@ -22,7 +22,7 @@ for ($i=0; $i< count($json_obj); $i++) {
     $day = $json_obj[$i][2];
     $date = $year . '-' . $month . '-' . $day;
 
-    $stmt = $mysqli->prepare("SELECT title, time FROM events WHERE username=? AND date=?");
+    $stmt = $mysqli->prepare("SELECT event_id, title, time FROM events WHERE username=? AND date=?");
     if(!$stmt){
         printf("Query Prep Failed: %s\n", $mysqli->error);
         exit;
@@ -38,7 +38,8 @@ for ($i=0; $i< count($json_obj); $i++) {
             "month" => $month - 1,
             "day" => $day,
             "title" => $row['title'],
-            "time" => $row['time']
+            "time" => $row['time'],
+            "id" => $row['event_id']
         ));
     }
     $stmt->close();

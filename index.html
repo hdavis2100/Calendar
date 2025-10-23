@@ -69,6 +69,7 @@
 <script>
         // For our purposes, we can keep the current month in a variable in the global scope
     let currentMonth = new Month(new Date().getFullYear(), new Date().getMonth()); // Current month
+    
     addEvent = function() {
         const title = document.getElementById("eventTitle").value;
         const date = document.getElementById("eventDate").value;
@@ -151,8 +152,9 @@
                 let date = event.year + "-" + event.month + "-" + event.day;
                 let title = event.title;
                 let time = event.time;
-                eventsByDate[date].push({ 'title': title, 'time': time });
-                
+                let id = event.id;
+                eventsByDate[date].push({ 'title': title, 'time': time, 'id': id });
+
             }
             for(let w in weeks){
             let days = weeks[w].getDates();
@@ -170,6 +172,22 @@
                     let event = eventsByDate[cellDateKey][e];
                     let eventDiv = document.createElement("div");
                     eventDiv.innerText = event.time + " - " + event.title;
+                    let delButton = document.createElement("button");
+                    delButton.innerText = "Delete";
+                    
+                    delButton.addEventListener("click", function() {
+                        let data = { 'id': event.id };
+                        fetch("deleteEvent.php", {
+                            method: 'POST',
+                            body: JSON.stringify(data),
+                            headers: { 'content-type': 'application/json' }
+                        
+                        })
+                        .then(response => response.json())
+                        .then( () => updateCalendar())
+                        .catch(error => console.error('Error:',error))
+                    }, false);
+                    eventDiv.appendChild(delButton);
                     cell.appendChild(eventDiv);
                 }
                 
