@@ -49,6 +49,19 @@
         <button id="next_month_btn">Next Month</button>
 
     </table>
+
+    <div id="addEventForm">
+        <p> Add an Event: Your date must be in the format Year-Month-Date (ex: 2023-3-15, 20000-12-1), and your time must be in the format hour:minute (ex: 14:30, 6:05)</p>
+    
+        <label for="eventTitle">Event Title:</label>
+        <input type="text" id="eventTitle" />
+        <label for ="eventDate">Event Date:</label>
+        <input type="text" id="eventDate" />
+        <label for="eventTime">Event Time:</label>
+        <input type="text" id="eventTime" />
+        <button id="addEventButton">Add Event</button>
+
+    </div>
 </body>
 </html>
 <script src="calendarMin.js"></script>
@@ -56,6 +69,45 @@
 <script>
         // For our purposes, we can keep the current month in a variable in the global scope
     let currentMonth = new Month(new Date().getFullYear(), new Date().getMonth()); // Current month
+    addEvent = function() {
+        const title = document.getElementById("eventTitle").value;
+        const date = document.getElementById("eventDate").value;
+        const time = document.getElementById("eventTime").value;
+        const data = { 'title': title, 'date': date, 'time': time };
+        fetch("addEvent.php", {
+            method: 'POST',
+            body: JSON.stringify(data),
+            headers: { 'content-type': 'application/json' }
+        
+        })
+        .then(response => response.json())
+        .then( () => 
+        updateCalendar(),
+        document.getElementById("eventTitle").value = "",
+        document.getElementById("eventDate").value = "",
+        document.getElementById("eventTime").value = ""
+    )
+
+        .catch(error => console.error('Error:',error))
+        
+
+    };
+
+    getEventsByDate = function(year, month, day) {
+        
+        fetch("getEventsByDate.php", {
+            method: 'POST',
+            body: JSON.stringify({ 'year': year, 'month': month, 'day': day }),
+            headers: { 'content-type': 'application/json' }
+        
+        })
+        .then(response => response.json())
+        .then(data => {
+            return data.events;
+        })
+        .catch(error => console.error('Error:',error))
+        
+    };
 
     // Change the month when the "next" button is pressed
     document.getElementById("next_month_btn").addEventListener("click", function(event){
@@ -79,16 +131,25 @@
         let calBody = document.getElementById("calBody");
         calBody.innerHTML = ""; 
 
-        for(var w in weeks){
-            var days = weeks[w].getDates();
+        for(let w in weeks){
+            let days = weeks[w].getDates();
             
             const row = document.createElement("tr");
 
             
             
-            for(var d in days){
+            for(let d in days){
                 const cell = document.createElement("td");
                 cell.innerText = days[d].getDate();
+                events = getEventsByDate(days[d].getFullYear(), days[d].getMonth(), days[d].getDate());
+                
+                for(let e in events){
+                    const eventDiv = document.createElement("div");
+                    title = events[e].title;
+                    time = events[e].time;
+                    eventDiv.innerText = time + " " + title;
+                    cell.appendChild(eventDiv);
+                }
                 row.appendChild(cell);
                 
             }
@@ -107,11 +168,14 @@
             if(data.success) {
                 document.getElementById("loginForm").hidden = true;
                 document.getElementById("createAccountForm").hidden = true;
+                document.getElementById("addEventForm").hidden = true;
                 document.getElementById("logoutForm").hidden = false;
+                document.getElementById("eventTitle").value = "";
+                document.getElementById("eventDate").value = "";
+                document.getElementById("eventTime").value = "";
                 
 
-                
-            } 
+            }
             else {
                 document.getElementById("loginForm").hidden = false;
                 document.getElementById("usernameinput").value = "";
@@ -119,6 +183,8 @@
                 document.getElementById("createAccountUsername").value = "";
                 document.getElementById("createAccountPassword").value = "";
                 document.getElementById("createAccountForm").hidden = false;
+                document.getElementById("addEventForm").hidden = true;
+
 
                 document.getElementById("logoutForm").hidden = true;
             }
@@ -180,6 +246,7 @@
     document.getElementById("loginbutton").addEventListener("click", login, false);
     document.getElementById("createAccountButton").addEventListener("click", createAccount, false);
     document.getElementById("logoutButton").addEventListener("click", logout, false);
+    document.getElementById("addEventButton").addEventListener("click", addEvent, false);
     
 
 </script>
