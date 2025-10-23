@@ -16,6 +16,10 @@ $newTitle = $json_obj['newTitle'];
 $newDate = $json_obj['newDate'];
 $newTime = $json_obj['newTime'];
 
+
+
+
+
 // Title must be alphanumeric and max 30 chars
 if (!preg_match('/^[A-Za-z0-9 ]{0,30}$/', $newTitle) && $newTitle) {
     echo json_encode(array(
@@ -24,15 +28,38 @@ if (!preg_match('/^[A-Za-z0-9 ]{0,30}$/', $newTitle) && $newTitle) {
     exit;
 }
 
+
+
 // Date must be in year-month-day format
-if (!preg_match('/^[1-9]\d{1,}-[1-9]\d{0,1}-[1-9]\d{0,1}$/', $newDate) && $newDate) {
+if (preg_match('/^[1-9]\d{1,}-([1-9]\d{0,1})-([1-9]\d{0,1})$/', $newDate, $matches)) {
+    $month = (int)$matches[1];
+    $day = (int)$matches[2];
+
+    if ($month < 1 || $month > 12 || $day < 1 || $day > 31) {
+        echo json_encode(array(
+            "success" => false,
+        ));
+        exit;
+    }
+} else if ($newDate) {
     echo json_encode(array(
         "success" => false,
     ));
     exit;
 }
+
 // Time must be in hour:minute format
-if (!preg_match('/^\d{1,2}:\d{2}$/', $newTime) && $newTime) {
+if (preg_match('/^(\d{1,2}):(\d{2})$/', $newTime, $matches) && $newTime) {
+    $hour = (int)$matches[1];
+    $minute = (int)$matches[2];
+    if ($hour < 0 || $hour > 23 || $minute < 0 || $minute > 59) {
+        echo json_encode(array(
+            "success" => false,
+        ));
+        exit;
+    }
+}
+else if ($newTime) {
     echo json_encode(array(
         "success" => false,
     ));
