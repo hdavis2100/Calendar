@@ -24,7 +24,7 @@ if (!hash_equals($_SESSION['token'], $token)) {
 
 require 'database.php';
 
-if ($shareStatus) {
+if (!$shareStatus) {
     // Add share into database
     $stmt = $mysqli->prepare("INSERT INTO shares (source, dest) VALUES (?, ?)");
     if(!$stmt){
