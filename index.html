@@ -362,7 +362,7 @@
         // Reset current month on login/logout/refresh
         currentMonth = new Month(new Date().getFullYear(), new Date().getMonth());
         currView = "";
-        currViewUser.innerText = "Your Calendar";
+        
         fetch("setContent.php", {
             method: 'POST',
             
