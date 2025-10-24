@@ -74,6 +74,23 @@
         <label for="editEventTime">New Event Time:</label>
         <input type="text" id="editEventTime" />
         </div>
+
+        <div id="shareCal">
+            <h3> Click a user to share or unshare your calendar with them:</h3>
+            <ul id="userList">
+                
+            </ul>
+            
+        </div>
+
+        <div id="switchCalendar">
+
+            <h3> Click a user to view their calendar:</h3>
+            <p> Currently viewing: <span id="currentViewUser"></span></p>
+            <ul id="calendarList">
+                
+            </ul>
+        </div>
 </body>
 </html>
 <script src="calendarMin.js"></script>
@@ -83,6 +100,9 @@
     let currentMonth = new Month(new Date().getFullYear(), new Date().getMonth()); // Current month
     let token = "";
     let username = "";
+    let currView = "";
+    let currViewUser = document.getElementById("currentViewUser");
+
     // Get event data from input and send to addEvent.php to store in database
     let addEvent = function() {
         const title = document.getElementById("eventTitle").value;
@@ -157,7 +177,7 @@
                     continue;
                 }
 
-                dates.push([days[d].getFullYear(), days[d].getMonth() + 1, days[d].getDate()]);
+                dates.push([days[d].getFullYear(), days[d].getMonth() + 1, days[d].getDate(), currView]);
                 
             }
         }
@@ -170,7 +190,55 @@
         })
         .then(response => response.json())
         .then(data => {
+            let userDict = data.users;
+            let userList = document.getElementById("userList");
+            let calendarList = document.getElementById("calendarList");
+            
+            calendarList.innerHTML = "";
+            // Populate calendar list for switching views
+            for (let user of data.views){
+                let calItem = document.createElement("li");
+                calItem.innerText = user == username ? user + " (Your Calendar)" : user;
+                viewButton = document.createElement("button");
+                viewButton.innerText = "View";
+                calendarList.appendChild(calItem);
+                calItem.appendChild(viewButton);
+                // Switch calendar view on click
+                viewButton.addEventListener("click", function() {
+                    currView = user == username ? "" : user;
+                    document.getElementById("currentViewUser").innerText = currView == "" ? "Your Calendar" : currView;
+                    updateCalendar();
+                }, false);
+            }
 
+            // Populate user list for sharing calendars
+            userList.innerHTML = "";
+            for (let user in Object.keys(userDict)){
+                let userItem = document.createElement("li");
+                let shareStatus = userDict[user];
+                userItem.innerText = user;
+                let shareButton = document.createElement("button");
+                shareButton.innerText = shareStatus ? "Unshare" : "Share";
+                userItem.appendChild(shareButton);
+                // Share or unshare calendar on click
+                shareButton.addEventListener("click", function() {
+                    let data = { 'dest': user, 'shareStatus': shareStatus, 'token': token };
+                    fetch("addShare.php", {
+                        method: 'POST',
+                        body: JSON.stringify(data),
+                        headers: { 'content-type': 'application/json' }
+                    
+                    })
+                    .then(response => response.json())
+                    .then( () => updateCalendar())
+                    .catch(error => console.error('Error:',error))
+                }, false);
+                userList.appendChild(userItem);
+
+            }
+
+
+                
             // Map each date to its corresponding events
             for(let e in data.events) {
                 let event = data.events[e];
@@ -277,7 +345,8 @@
 
         // Reset current month on login/logout/refresh
         currentMonth = new Month(new Date().getFullYear(), new Date().getMonth());
-        
+        currView = "";
+        currViewUser.innerText = "Your Calendar";
         fetch("setContent.php", {
             method: 'POST',
             
@@ -325,6 +394,7 @@
             updateCalendar();
         })
         .catch(error => console.error('Error:',error))
+
     };
 
     // Populate content on page load

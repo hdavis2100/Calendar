@@ -12,19 +12,27 @@ if (!isset($_SESSION['username'])) {
 }
 $json_str = file_get_contents('php://input');
 $json_obj = json_decode($json_str, true);
-
+$currView = $json_obj[0][3];
 $username = $_SESSION['username'];
 
+
 // Events array to return
-$events = array(); 
+$events = array();
+$views = array();
 
 require 'database.php';
 
 // For each date, get all events for that date
+if ($currView){
+
+    $username = $currView;
+}
+
 for ($i=0; $i< count($json_obj); $i++) {
     $year = $json_obj[$i][0];
     $month = $json_obj[$i][1];
     $day = $json_obj[$i][2];
+    
 
     // Format date as stored in database
     $date = $year . '-' . $month . '-' . $day;
@@ -53,9 +61,54 @@ for ($i=0; $i< count($json_obj); $i++) {
     $stmt->close();
 }
 
-echo json_encode(array(
-    "events" => $events
+$username = $_SESSION['username'];
+$stmt = $mysqli->prepare("SELECT username FROM users WHERE username!=?");
+if(!$stmt){
+    printf("Query Prep Failed: %s\n", $mysqli->error);
+    exit;
+}
+$stmt->bind_param("s", $username);
+$stmt->execute();
+$result = $stmt->get_result();
+$users = array();
+while ($row = $result->fetch_assoc()) {
+    $users[$row['username']] = false;
+}
+$stmt->close();
 
+$stmt = $mysqli->prepare("SELECT dest FROM shares WHERE source=?");
+if(!$stmt){
+    printf("Query Prep Failed: %s\n", $mysqli->error);
+    exit;
+}
+$stmt->bind_param("s", $username);
+$stmt->execute(); 
+$result = $stmt->get_result();
+while ($row = $result->fetch_assoc()) {
+    $users[$row['dest']] = true;
+}
+$stmt->close();
+
+$stmt = $mysqli->prepare("SELECT source FROM shares WHERE dest=?");
+if(!$stmt){
+    printf("Query Prep Failed: %s\n", $mysqli->error);
+    exit;
+}
+$stmt->bind_param("s", $username);
+$stmt->execute();
+$result = $stmt->get_result();
+while ($row = $result->fetch_assoc()) {
+    array_push($views, $row['source']);
+}
+$stmt->close();
+
+array_push($views, $username);
+
+echo json_encode(array(
+    "events" => $events,
+    "users" => $users,
+    "views" => $views
 ));
 
 exit();
+?>
