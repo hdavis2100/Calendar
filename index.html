@@ -81,13 +81,14 @@
 <script>
         // For our purposes, we can keep the current month in a variable in the global scope
     let currentMonth = new Month(new Date().getFullYear(), new Date().getMonth()); // Current month
-    
+    let token = "";
+    let username = "";
     // Get event data from input and send to addEvent.php to store in database
     let addEvent = function() {
         const title = document.getElementById("eventTitle").value;
         const date = document.getElementById("eventDate").value;
         const time = document.getElementById("eventTime").value;
-        const data = { 'title': title, 'date': date, 'time': time };
+        const data = { 'title': title, 'date': date, 'time': time, 'token': token };
         fetch("addEvent.php", {
             method: 'POST',
             body: JSON.stringify(data),
@@ -133,6 +134,13 @@
         let calBody = document.getElementById("calBody");
         calBody.innerHTML = ""; 
         
+        // All event actions call update, refresh all inputs here
+        document.getElementById("eventTitle").value = "";
+        document.getElementById("eventDate").value = "";
+        document.getElementById("eventTime").value = "";
+        document.getElementById("editEventTitle").value = "";
+        document.getElementById("editEventDate").value = "";
+        document.getElementById("editEventTime").value = "";
         // dates will hold all dates in the current month to be sent to getEvents.php and eventsByDate will map dates to their corresponding events
         dates = [];
         eventsByDate = {};
@@ -203,7 +211,7 @@
                     
                     // Delete and update by stored event id
                     delButton.addEventListener("click", function() {
-                        let data = { 'id': event.id };
+                        let data = { 'id': event.id, 'token': token };
                         fetch("deleteEvent.php", {
                             method: 'POST',
                             body: JSON.stringify(data),
@@ -226,7 +234,7 @@
                         const newTime = document.getElementById("editEventTime").value;
 
                         // Blank fields handled in editEvent.php
-                        let data = { 'id': event.id, 'newTitle': newTitle,  'newDate': newDate, 'newTime': newTime };
+                        let data = { 'id': event.id, 'newTitle': newTitle,  'newDate': newDate, 'newTime': newTime, 'token': token };
                         fetch("editEvent.php", {
                             method: 'POST',
                             body: JSON.stringify(data),
@@ -291,6 +299,9 @@
                 document.getElementById("editEventTitle").value = "";
                 document.getElementById("editEventDate").value = "";
                 document.getElementById("editEventTime").value = "";
+                token = data.token;
+                username = data.username;
+
                 
 
             }
@@ -303,6 +314,8 @@
                 document.getElementById("createAccountForm").hidden = false;
                 document.getElementById("addEventForm").hidden = true;
                 document.getElementById("editEventForm").hidden = true;
+                token = "";
+                username = "";
 
 
                 document.getElementById("logoutForm").hidden = true;

@@ -51,6 +51,7 @@ if(!password_verify($password, $hashed_password)){
 
 
 // Login successful, set session variables
+ini_set("session.cookie_httponly", 1);
 session_start();
 $_SESSION['username'] = $username;
 $_SESSION['token'] = bin2hex(random_bytes(32));

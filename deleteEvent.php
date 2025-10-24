@@ -1,6 +1,7 @@
 <?php
 
 header('Content-Type: application/json');
+ini_set("session.cookie_httponly", 1);
 session_start();
 if (!isset($_SESSION['username'])) {
     echo json_encode(array(
@@ -14,6 +15,11 @@ $json_obj = json_decode($json_str, true);
 
 $username = $_SESSION['username'];
 $eventId = $json_obj['id'];
+$token = $json_obj['token'];
+if (!hash_equals($_SESSION['token'], $token)) {
+    die("Request forgery detected");
+    
+}
 
 require 'database.php';
 

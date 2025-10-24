@@ -1,5 +1,6 @@
 <?php
 header("Content-Type: application/json");
+ini_set("session.cookie_httponly", 1);
 session_start();
 if (!isset($_SESSION['username'])) {
     echo json_encode(array(
@@ -13,6 +14,11 @@ $json_obj = json_decode($json_str, true);
 $title = $json_obj['title'];
 $date = $json_obj['date'];
 $time = $json_obj['time'];
+$token = $json_obj['token'];
+if (!hash_equals($_SESSION['token'], $token)) {
+    die("Request forgery detected");
+    
+}
 $username = $_SESSION['username'];
 
 // Title must be alphanumeric and max 30 chars

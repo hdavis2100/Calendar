@@ -1,6 +1,7 @@
 <?php
 
 header('Content-Type: application/json');
+ini_set("session.cookie_httponly", 1);
 session_start();
 if (!isset($_SESSION['username'])) {
     echo json_encode(array(
@@ -9,12 +10,19 @@ if (!isset($_SESSION['username'])) {
 
     exit;
 }
+
 $json_str = file_get_contents('php://input');
 $json_obj = json_decode($json_str, true);
 $eventId = $json_obj['id'];
 $newTitle = $json_obj['newTitle'];
 $newDate = $json_obj['newDate'];
 $newTime = $json_obj['newTime'];
+
+$token = $json_obj['token'];
+if (!hash_equals($_SESSION['token'], $token)) {
+    die("Request forgery detected");
+    
+}
 
 $username = $_SESSION['username'];
 
