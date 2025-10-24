@@ -83,7 +83,7 @@
     let currentMonth = new Month(new Date().getFullYear(), new Date().getMonth()); // Current month
     
     // Get event data from input and send to addEvent.php to store in database
-    addEvent = function() {
+    let addEvent = function() {
         const title = document.getElementById("eventTitle").value;
         const date = document.getElementById("eventDate").value;
         const time = document.getElementById("eventTime").value;
