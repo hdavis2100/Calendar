@@ -12,18 +12,18 @@ if (!isset($_SESSION['username'])) {
 $json_str = file_get_contents('php://input');
 $json_obj = json_decode($json_str, true);
 
-
+$username = $_SESSION['username'];
 $eventId = $json_obj['id'];
 
 require 'database.php';
 
 // Delete event by event id
-$stmt = $mysqli->prepare("DELETE FROM events WHERE event_id=?");
+$stmt = $mysqli->prepare("DELETE FROM events WHERE event_id=? AND username=?");
 if(!$stmt){
     printf("Query Prep Failed: %s\n", $mysqli->error);
     exit;
 }
-$stmt->bind_param("i", $eventId);
+$stmt->bind_param("is", $eventId, $username);
 $stmt->execute();
 $stmt->close();
 

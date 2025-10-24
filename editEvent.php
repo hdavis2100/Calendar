@@ -16,7 +16,7 @@ $newTitle = $json_obj['newTitle'];
 $newDate = $json_obj['newDate'];
 $newTime = $json_obj['newTime'];
 
-
+$username = $_SESSION['username'];
 
 
 
@@ -70,13 +70,13 @@ else if ($newTime) {
 require 'database.php';
 
 // Grab current event details to fill blank fields
-$stmt = $mysqli->prepare("SELECT title, date, time FROM events WHERE event_id=?");
+$stmt = $mysqli->prepare("SELECT title, date, time FROM events WHERE event_id=? AND username=?");
 
 if(!$stmt){
     printf("Query Prep Failed: %s\n", $mysqli->error);
     exit;
 }
-$stmt->bind_param("i", $eventId);
+$stmt->bind_param("is", $eventId, $username);
 $stmt->execute();
 $stmt->bind_result($currentTitle, $currentDate, $currentTime);
 $stmt->fetch();
@@ -96,12 +96,12 @@ if (!$newTime) {
 }
 
 // Update events by event id
-$stmt = $mysqli->prepare("UPDATE events SET title=?, date=?, time=? WHERE event_id=?");
+$stmt = $mysqli->prepare("UPDATE events SET title=?, date=?, time=? WHERE event_id=? AND username=?");
 if (!$stmt) {
     printf("Query Prep Failed: %s\n", $mysqli->error);
     exit;
 }
-$stmt->bind_param("sssi", $newTitle, $newDate, $newTime, $eventId);
+$stmt->bind_param("sssis", $newTitle, $newDate, $newTime, $eventId, $username);
 $stmt->execute();
 $stmt->close();
 
