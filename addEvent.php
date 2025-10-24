@@ -16,7 +16,7 @@ $time = $json_obj['time'];
 $username = $_SESSION['username'];
 
 // Title must be alphanumeric and max 30 chars
-if (!preg_match('/^[A-Za-z0-9 ]{0,30}$/', $newTitle) && $newTitle) {
+if (!preg_match('/^[A-Za-z0-9 ]{0,30}$/', $title) && $title) {
     echo json_encode(array(
         "success" => false,
     ));
@@ -24,7 +24,7 @@ if (!preg_match('/^[A-Za-z0-9 ]{0,30}$/', $newTitle) && $newTitle) {
 }
 
 // Date must be in year-month-day format
-if (!preg_match('/^[1-9]\d{1,}-[1-9]\d{0,1}-[1-9]\d{0,1}$/', $newDate) && $newDate) {
+if (!preg_match('/^[1-9]\d{1,}-[1-9]\d{0,1}-[1-9]\d{0,1}$/', $date) && $date) {
     echo json_encode(array(
         "success" => false,
     ));
@@ -32,7 +32,7 @@ if (!preg_match('/^[1-9]\d{1,}-[1-9]\d{0,1}-[1-9]\d{0,1}$/', $newDate) && $newDa
 }
 
 // Time must be in hour:minute format
-if (!preg_match('/^\d{1,2}:\d{2}$/', $newTime) && $newTime) {
+if (!preg_match('/^\d{1,2}:\d{2}$/', $time) && $time) {
     echo json_encode(array(
         "success" => false,
     ));
