@@ -278,49 +278,61 @@
                     let event = eventsByDate[cellDateKey][e];
                     let eventDiv = document.createElement("div");
                     eventDiv.innerText = event.time + " - " + event.title;
-                    let delButton = document.createElement("button");
-                    delButton.innerText = "Delete";
-                    
-                    // Delete and update by stored event id
-                    delButton.addEventListener("click", function() {
-                        let data = { 'id': event.id, 'token': token };
-                        fetch("deleteEvent.php", {
-                            method: 'POST',
-                            body: JSON.stringify(data),
-                            headers: { 'content-type': 'application/json' }
+                    // Only allow deletion and editing if viewing own calendar
+                    // Enforced username > 2 characters so no issues with condition on currView
+                    if (currView == ""){
+
+                        document.getElementById("editEventForm").hidden = false;
+                        document.getElementById("addEventForm").hidden = false;
+                        let delButton = document.createElement("button");
+                        delButton.innerText = "Delete";
                         
-                        })
-                        .then(response => response.json())
-                        .then( () => updateCalendar())
-                        .catch(error => console.error('Error:',error))
-                    }, false);
-                    eventDiv.appendChild(delButton);
+                        // Delete and update by stored event id
+                        delButton.addEventListener("click", function() {
+                            let data = { 'id': event.id, 'token': token };
+                            fetch("deleteEvent.php", {
+                                method: 'POST',
+                                body: JSON.stringify(data),
+                                headers: { 'content-type': 'application/json' }
+                            
+                            })
+                            .then(response => response.json())
+                            .then( () => updateCalendar())
+                            .catch(error => console.error('Error:',error))
+                        }, false);
+                        eventDiv.appendChild(delButton);
                     
-                    let editButton = document.createElement("button");
-                    editButton.innerText = "Edit";
-                    editButton.addEventListener("click", function() {
+                    
+                        let editButton = document.createElement("button");
+                        editButton.innerText = "Edit";
+                        editButton.addEventListener("click", function() {
 
-                        // Get new event fields from edit event inputs
-                        const newTitle = document.getElementById("editEventTitle").value;
-                        const newDate = document.getElementById("editEventDate").value;
-                        const newTime = document.getElementById("editEventTime").value;
+                            // Get new event fields from edit event inputs
+                            const newTitle = document.getElementById("editEventTitle").value;
+                            const newDate = document.getElementById("editEventDate").value;
+                            const newTime = document.getElementById("editEventTime").value;
 
-                        // Blank fields handled in editEvent.php
-                        let data = { 'id': event.id, 'newTitle': newTitle,  'newDate': newDate, 'newTime': newTime, 'token': token };
-                        fetch("editEvent.php", {
-                            method: 'POST',
-                            body: JSON.stringify(data),
-                            headers: { 'content-type': 'application/json' }
-                        
-                        })
-                        .then(response => response.json())
-                        .then(() => {
-                            updateCalendar();
-                        })
-                        .catch(error => console.error('Error:', error));
+                            // Blank fields handled in editEvent.php
+                            let data = { 'id': event.id, 'newTitle': newTitle,  'newDate': newDate, 'newTime': newTime, 'token': token };
+                            fetch("editEvent.php", {
+                                method: 'POST',
+                                body: JSON.stringify(data),
+                                headers: { 'content-type': 'application/json' }
+                            
+                            })
+                            .then(response => response.json())
+                            .then(() => {
+                                updateCalendar();
+                            })
+                            .catch(error => console.error('Error:', error));
 
-                    });
-                    eventDiv.appendChild(editButton);
+                        });
+                        eventDiv.appendChild(editButton);
+                    }
+                    else{
+                        document.getElementById("editEventForm").hidden = true;
+                        document.getElementById("addEventForm").hidden = true;
+                    }
                     cell.appendChild(eventDiv);
                 }
                 
