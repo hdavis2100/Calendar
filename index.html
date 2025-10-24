@@ -95,14 +95,14 @@
         
         })
         .then(response => response.json())
-        .then( () =>
+        .then( (data) => {
         
         // Display updated calendar and clear input fields
-        updateCalendar(),
-        document.getElementById("eventTitle").value = "",
-        document.getElementById("eventDate").value = "",
-        document.getElementById("eventTime").value = ""
-    )
+        updateCalendar();
+        document.getElementById("eventTitle").value = "";
+        document.getElementById("eventDate").value = "";
+        document.getElementById("eventTime").value = "";
+    })
 
         .catch(error => console.error('Error:',error))
         
