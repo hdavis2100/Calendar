@@ -5,17 +5,10 @@ $json_obj = json_decode($json_str, true);
 $username = $json_obj['username'];
 $password = $json_obj['password'];
 
-if(!preg_match('/^[A-Za-z0-9 ]{2,30}$/', $username)){
-    echo json_encode(array(
-        "success" => false,
-        "message" => "Username contains invalid characters."
-    ));
-    exit;
-}
 
 
 // Ensure username is alphanumeric and less than 30 characters
-if (!preg_match('/^[A-Za-z0-9]{0,30}$/', $username)) {
+if (!preg_match('/^[A-Za-z0-9]{2,30}$/', $username)) {
     echo json_encode(array(
         "success" => false,
         "message" => "Username must contain only letters and numbers and be less than 30 characters."
