@@ -209,7 +209,7 @@
                 calItem.appendChild(viewButton);
                 // Switch calendar view on click
                 viewButton.addEventListener("click", function() {
-                    currView = user == username ? "" : user;
+                    currView = user === username ? "" : user;
                     document.getElementById("currentViewUser").innerText = currView == "" ? "Your Calendar" : currView;
                     updateCalendar();
                 }, false);
