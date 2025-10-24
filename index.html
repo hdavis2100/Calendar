@@ -149,6 +149,10 @@
 
     // Populates the calendar. Gets all dates using calendarMin.js, fetches events for those dates, and maps each valid date to corresponding events to be displayed
     function updateCalendar(){
+
+        if (!username) {
+            return;
+        }
         document.getElementById("calendarLabel").innerText = (currentMonth.month + 1) + " " + currentMonth.year;
         let weeks = currentMonth.getWeeks();
         let calBody = document.getElementById("calBody");
@@ -368,10 +372,12 @@
                 document.getElementById("editEventTitle").value = "";
                 document.getElementById("editEventDate").value = "";
                 document.getElementById("editEventTime").value = "";
+                document.getElementById("shareCal").hidden = false;
+                document.getElementById("switchCalendar").hidden = false;
                 token = data.token;
                 username = data.username;
 
-                
+                currViewUser.innerText = "Your Calendar";
 
             }
             else {
@@ -383,6 +389,8 @@
                 document.getElementById("createAccountForm").hidden = false;
                 document.getElementById("addEventForm").hidden = true;
                 document.getElementById("editEventForm").hidden = true;
+                document.getElementById("shareCal").hidden = true;
+                document.getElementById("switchCalendar").hidden = true;
                 token = "";
                 username = "";
 
