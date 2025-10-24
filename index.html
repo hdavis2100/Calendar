@@ -279,8 +279,8 @@
         currentMonth = new Month(new Date().getFullYear(), new Date().getMonth());
         
         fetch("setContent.php", {
-            method: 'GET',
-            headers: { 'content-type': 'application/json' }
+            method: 'POST',
+            
         
         })
         .then(response => response.json())
