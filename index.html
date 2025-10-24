@@ -213,7 +213,7 @@
 
             // Populate user list for sharing calendars
             userList.innerHTML = "";
-            for (let user in Object.keys(userDict)){
+            for (let user of Object.keys(userDict)){
                 let userItem = document.createElement("li");
                 let shareStatus = userDict[user];
                 userItem.innerText = user;
