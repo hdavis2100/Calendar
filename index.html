@@ -79,6 +79,12 @@
         <label for="tagEvent">Tag Event:</label>
         <input type="text" id="tagEvent" />
     </div>
+    <div id="filterByTag">
+        <p> Enter a tag to only view events with that tag:</p>
+        <label for="filterTag">Filter by Tag:</label>
+        <input type="text" id="filterTag" />
+        <button id="filterButton">Filter</button>
+    </div>
         <div id="shareCal">
             <h3> Click a user to share or unshare your calendar with them:</h3>
             <ul id="userList">
@@ -107,6 +113,7 @@
     let username = "";
     let currView = "";
     let currViewUser = document.getElementById("currentViewUser");
+    let filter = "";
 
     // Get event data from input and send to addEvent.php to store in database
     let addEvent = function() {
@@ -270,6 +277,11 @@
                 let time = event.time;
                 let id = event.id;
                 let tag = event.tag;
+
+                // Only display events with tag match, if filter not set display all
+                if (filter && tag != filter){
+                    continue;
+                }
                 eventsByDate[date].push({ 'title': title, 'time': time, 'id': id, 'tag': tag } );
 
             }
@@ -402,18 +414,18 @@
 
         
         
-        
-        
-        
-        
-    
-        
+     let changeFilter = function() {
+        filter = document.getElementById("filterTag").value;
+        updateCalendar();
+     };   
+     document.getElementById("filterButton").addEventListener("click", changeFilter);
     
     let setContent = function() {
 
         // Reset current month on login/logout/refresh
         currentMonth = new Month(new Date().getFullYear(), new Date().getMonth());
         currView = "";
+        filter = "";
         
         fetch("setContent.php", {
             method: 'POST',
@@ -441,6 +453,7 @@
                 document.getElementById("calendarLabel").hidden = false;
                 document.getElementById("calendar").hidden = false;
                 document.getElementById("tagEvent").hidden = false;
+                document.getElementById("filterByTag").hidden = false;
                 token = data.token;
                 username = data.username;
 
@@ -461,6 +474,7 @@
                 document.getElementById("calendarLabel").hidden = true;
                 document.getElementById("calendar").hidden = true;
                 document.getElementById("tagEvent").hidden = true;
+                document.getElementById("filterByTag").hidden = true;
                 currViewUser.innerText = "";
                 token = "";
                 username = "";
