@@ -242,7 +242,15 @@
 
             }
 
+            if (currView === ""){
 
+                        document.getElementById("editEventForm").hidden = false;
+                        document.getElementById("addEventForm").hidden = false;
+            }
+            else{
+                        document.getElementById("editEventForm").hidden = true;
+                        document.getElementById("addEventForm").hidden = true;
+            }
                 
             // Map each date to its corresponding events
             for(let e in data.events) {
@@ -283,8 +291,7 @@
                     // Enforced username > 2 characters so no issues with condition on currView
                     if (currView === ""){
 
-                        document.getElementById("editEventForm").hidden = false;
-                        document.getElementById("addEventForm").hidden = false;
+                        
                         let delButton = document.createElement("button");
                         delButton.innerText = "Delete";
                         
@@ -332,10 +339,7 @@
                         
                     }
                     
-                    else{
-                        document.getElementById("editEventForm").hidden = true;
-                        document.getElementById("addEventForm").hidden = true;
-                    }
+                    
                     cell.appendChild(eventDiv);
                 }
                 
