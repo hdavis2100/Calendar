@@ -150,9 +150,7 @@
     // Populates the calendar. Gets all dates using calendarMin.js, fetches events for those dates, and maps each valid date to corresponding events to be displayed
     function updateCalendar(){
 
-        if (!username) {
-            return;
-        }
+        
         document.getElementById("calendarLabel").innerText = (currentMonth.month + 1) + " " + currentMonth.year;
         let weeks = currentMonth.getWeeks();
         let calBody = document.getElementById("calBody");
