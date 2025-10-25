@@ -281,7 +281,7 @@
                     eventDiv.innerText = event.time + " - " + event.title;
                     // Only allow deletion and editing if viewing own calendar
                     // Enforced username > 2 characters so no issues with condition on currView
-                    if (currView == ""){
+                    if (currView === ""){
 
                         document.getElementById("editEventForm").hidden = false;
                         document.getElementById("addEventForm").hidden = false;
@@ -329,8 +329,7 @@
 
                         });
                         eventDiv.appendChild(editButton);
-                        document.getElementById("editEventForm").hidden = false;
-                        document.getElementById("addEventForm").hidden = false;
+                        
                     }
                     
                     else{
