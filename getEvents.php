@@ -38,7 +38,7 @@ for ($i=0; $i< count($json_obj); $i++) {
     $date = $year . '-' . $month . '-' . $day;
 
     // Grab event by username and date
-    $stmt = $mysqli->prepare("SELECT event_id, title, time FROM events WHERE username=? AND date=?");
+    $stmt = $mysqli->prepare("SELECT event_id, title, time, tag FROM events WHERE username=? AND date=?");
     if(!$stmt){
         printf("Query Prep Failed: %s\n", $mysqli->error);
         exit;
@@ -55,7 +55,8 @@ for ($i=0; $i< count($json_obj); $i++) {
             "day" => $day,
             "title" => $row['title'],
             "time" => $row['time'],
-            "id" => $row['event_id']
+            "id" => $row['event_id'],
+            "tag" => $row['tag']
         ));
     }
     $stmt->close();

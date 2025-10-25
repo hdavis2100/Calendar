@@ -69,12 +69,16 @@
         <p> Edit an Event: Enter Updated details below and click the edit button for your desired event to edit. If you want to leave a field unchanged, just leave it blank.</p>
         <label for="editEventTitle">New Event Title:</label>
         <input type="text" id="editEventTitle" />
-        <label for ="editEventDate">New Event Date:</label>
+        <label for="editEventDate">New Event Date:</label>
         <input type="text" id="editEventDate" />
         <label for="editEventTime">New Event Time:</label>
         <input type="text" id="editEventTime" />
         </div>
-
+    <div id="tagEventForm">
+        <p> Add an Event Tag: Enter the tag below and click the tag button on the event in your calendar.</p>
+        <label for="tagEvent">Tag Event:</label>
+        <input type="text" id="tagEvent" />
+    </div>
         <div id="shareCal">
             <h3> Click a user to share or unshare your calendar with them:</h3>
             <ul id="userList">
@@ -91,6 +95,7 @@
                 
             </ul>
         </div>
+        
 </body>
 </html>
 <script src="calendarMin.js"></script>
@@ -166,6 +171,7 @@
         document.getElementById("editEventTitle").value = "";
         document.getElementById("editEventDate").value = "";
         document.getElementById("editEventTime").value = "";
+        document.getElementById("tagEvent").value = "";
         // dates will hold all dates in the current month to be sent to getEvents.php and eventsByDate will map dates to their corresponding events
         dates = [];
         eventsByDate = {};
@@ -246,10 +252,12 @@
 
                         document.getElementById("editEventForm").hidden = false;
                         document.getElementById("addEventForm").hidden = false;
+                        document.getElementById("tagEventForm").hidden = false;
             }
             else{
                         document.getElementById("editEventForm").hidden = true;
                         document.getElementById("addEventForm").hidden = true;
+                        document.getElementById("tagEventForm").hidden = true;
             }
                 
             // Map each date to its corresponding events
@@ -261,7 +269,8 @@
                 let title = event.title;
                 let time = event.time;
                 let id = event.id;
-                eventsByDate[date].push({ 'title': title, 'time': time, 'id': id });
+                let tag = event.tag;
+                eventsByDate[date].push({ 'title': title, 'time': time, 'id': id, 'tag': tag } );
 
             }
             for(let w in weeks){
@@ -286,12 +295,48 @@
                 for(let e in eventsByDate[cellDateKey]) {
                     let event = eventsByDate[cellDateKey][e];
                     let eventDiv = document.createElement("div");
-                    eventDiv.innerText = event.time + " - " + event.title;
+                    let tag = event.tag;
+                    eventDiv.innerText = event.time + " - " + event.title + " - tag: " + tag;
+                    
                     // Only allow deletion and editing if viewing own calendar
                     // Enforced username > 2 characters so no issues with condition on currView
                     if (currView === ""){
 
-                        
+                        let tagButton = document.createElement("button");
+                        tagButton.innerText = tag ? "UnTag" : "Tag";
+
+                        if (tag){
+                            tagButton.addEventListener("click", function() {
+                                let data = { 'id': event.id, 'tag': null, 'token': token };
+                                fetch("tagEvent.php", {
+                                    method: 'POST',
+                                    body: JSON.stringify(data),
+                                    headers: { 'content-type': 'application/json' }
+                                
+                                })
+                                .then(response => response.json())
+                                .then( () => updateCalendar())
+                                .catch(error => console.error('Error:',error))
+                            }, false);
+                        }
+                        else {
+                            tagButton.addEventListener("click", function() {
+
+
+                                let data = { 'id': event.id, 'tag': document.getElementById("tagEvent").value, 'token': token };
+                                fetch("tagEvent.php", {
+                                    method: 'POST',
+                                    body: JSON.stringify(data),
+                                    headers: { 'content-type': 'application/json' }
+                                
+                                })
+                                .then(response => response.json())
+                                .then( () => updateCalendar())
+                                .catch(error => console.error('Error:',error))
+                            }, false);
+                        }
+                        eventDiv.appendChild(tagButton);
+
                         let delButton = document.createElement("button");
                         delButton.innerText = "Delete";
                         
@@ -395,6 +440,7 @@
                 document.getElementById("switchCalendar").hidden = false;
                 document.getElementById("calendarLabel").hidden = false;
                 document.getElementById("calendar").hidden = false;
+                document.getElementById("tagEvent").hidden = false;
                 token = data.token;
                 username = data.username;
 
@@ -414,6 +460,7 @@
                 document.getElementById("switchCalendar").hidden = true;
                 document.getElementById("calendarLabel").hidden = true;
                 document.getElementById("calendar").hidden = true;
+                document.getElementById("tagEvent").hidden = true;
                 currViewUser.innerText = "";
                 token = "";
                 username = "";
