@@ -23,7 +23,7 @@ $views = array();
 require 'database.php';
 
 // For each date, get all events for that date
-if ($currView){
+if ($currView != "") {
 
     $username = $currView;
 }
