@@ -355,6 +355,10 @@
                             else if (document.getElementById("perNone").checked){
                                 permissionLevel = "none";
                             }
+                            else {
+                                console.error("No permission level selected");
+                                return;
+                            }
 
                             let data = { 'id': event.id, 'memberName': memberName,  'permissionLevel': permissionLevel, 'token': token };
                             fetch("updateGroup.php", {
