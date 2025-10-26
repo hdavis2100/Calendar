@@ -329,7 +329,26 @@
                     let tag = event.tag;
                     eventDiv.innerHTML = event.time + " : " + event.title + " Created by " + event.creator + " - tag: " + tag;
                     
-                    
+                    // Delete button always attached so users can delete references
+                    let delButton = document.createElement("button");
+                    delButton.innerText = "Delete";
+                        
+                    // Delete and update by stored event id
+                    delButton.addEventListener("click", function() {
+                        let data = { 'id': event.id, 'token': token, date: cellDateKey, title: event.title, time: event.time, tag: event.tag };
+                        fetch("deleteEvent.php", {
+                            method: 'POST',
+                            body: JSON.stringify(data),
+                            headers: { 'content-type': 'application/json' }
+                            
+                        })
+                        .then(response => response.json())
+                        .then( () => updateCalendar())
+                        .catch(error => console.error('Error:',error))
+                    }, false);
+                        
+                    eventDiv.appendChild(delButton);
+
                     if (event.permission == "limited"){
                         // Limited permission events cannot be edited or deleted
                         cell.appendChild(eventDiv);
@@ -416,21 +435,8 @@
                         let delButton = document.createElement("button");
                         delButton.innerText = "Delete";
                         
-                        // Delete and update by stored event id
-                        delButton.addEventListener("click", function() {
-                            let data = { 'id': event.id, 'token': token, date: cellDateKey, title: event.title, time: event.time, tag: event.tag };
-                            fetch("deleteEvent.php", {
-                                method: 'POST',
-                                body: JSON.stringify(data),
-                                headers: { 'content-type': 'application/json' }
-                            
-                            })
-                            .then(response => response.json())
-                            .then( () => updateCalendar())
-                            .catch(error => console.error('Error:',error))
-                        }, false);
+                       
                         
-                        eventDiv.appendChild(delButton);
                     
                     
                         let editButton = document.createElement("button");
