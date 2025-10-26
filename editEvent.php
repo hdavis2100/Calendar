@@ -17,6 +17,7 @@ $eventId = $json_obj['id'];
 $newTitle = $json_obj['newTitle'];
 $newDate = $json_obj['newDate'];
 $newTime = $json_obj['newTime'];
+$tag = $json_obj['tag'];
 
 $token = $json_obj['token'];
 if (!hash_equals($_SESSION['token'], $token)) {
@@ -90,6 +91,7 @@ $stmt->bind_result($currentTitle, $currentDate, $currentTime);
 $stmt->fetch();
 $stmt->close();
 
+
 // Fill blank fields
 if (!$newTitle) {
     $newTitle = $currentTitle;
@@ -103,8 +105,24 @@ if (!$newTime) {
     $newTime = $currentTime;
 }
 
+$stmt = $mysqli->prepare("SELECT event_id FROM events WHERE date=? AND time=? AND title=? AND tag=?");
+if(!$stmt){
+    printf("Query Prep Failed: %s\n", $mysqli->error);
+    exit;
+}
+$ids = array();
+$stmt->bind_param("ssss", $newDate, $newTime, $newTitle, $tag);
+$stmt->execute();
+$stmt->bind_result($id);
+while ($stmt->fetch()) {
+    array_push($ids, $id);
+}
+$stmt->close();
+
+
+
 // Update events by event id
-$stmt = $mysqli->prepare("UPDATE events SET title=?, date=?, time=? WHERE event_id=? AND username=?");
+$stmt = $mysqli->prepare("UPDATE events SET title=?, date=?, time=? WHERE event_id=?");
 if (!$stmt) {
     printf("Query Prep Failed: %s\n", $mysqli->error);
     exit;

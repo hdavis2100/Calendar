@@ -56,11 +56,34 @@ for ($i=0; $i< count($json_obj); $i++) {
             "title" => $row['title'],
             "time" => $row['time'],
             "id" => $row['event_id'],
-            "tag" => $row['tag']
+            "tag" => $row['tag'],
+            "permission" => "full"
         ));
     }
     $stmt->close();
+    $stmt = $mysqli->prepare("SELECT events.event_id, events.title, events.time, events.tag, refs.permission FROM events JOIN refs ON events.event_id=refs.event_id WHERE refs.username=? AND events.date=?");
+    if(!$stmt){
+        printf("Query Prep Failed: %s\n", $mysqli->error);
+        exit;
+    }
+    $stmt->bind_param("ss", $username, $date);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    // Store event details. Update month = month - 1 to correct for JS Date object
+    while ($row = $result->fetch_assoc()) {
+        array_push($events, array(
+            "year" => $year,
+            "month" => $month - 1,
+            "day" => $day,
+            "title" => $row['title'],
+            "time" => $row['time'],
+            "id" => $row['event_id'],
+            "tag" => $row['tag'],
+            "permission" => $row['permission']
+        ));
+    }
 }
+
 
 $username = $_SESSION['username'];
 $stmt = $mysqli->prepare("SELECT username FROM users WHERE username!=?");

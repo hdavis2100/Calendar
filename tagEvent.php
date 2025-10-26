@@ -24,6 +24,7 @@ if (!hash_equals($_SESSION['token'], $token)) {
 require 'database.php';
 
 
+// If tag is empty we are removing the tag, otherwise we are adding the tag
 if ($tag == "") {
     $stmt = $mysqli->prepare("UPDATE events SET tag=NULL WHERE event_id=? AND username=?");
     if(!$stmt){
