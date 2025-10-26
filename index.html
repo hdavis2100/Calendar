@@ -294,13 +294,14 @@
                 let id = event.id;
                 let tag = event.tag;
                 let permission = event.permission;
+                let creator = event.creator;
                 
 
                 // Only display events with tag match, if filter not set display all
                 if (filter && tag != filter){
                     continue;
                 }
-                eventsByDate[date].push({ 'title': title, 'time': time, 'id': id, 'tag': tag, 'permission': permission } );
+                eventsByDate[date].push({ 'title': title, 'time': time, 'id': id, 'tag': tag, 'permission': permission, 'creator': creator } );
 
             }
             for(let w in weeks){
@@ -326,7 +327,7 @@
                     let event = eventsByDate[cellDateKey][e];
                     let eventDiv = document.createElement("div");
                     let tag = event.tag;
-                    eventDiv.innerText = event.time + " - " + event.title + " - tag: " + tag;
+                    eventDiv.innerHTML = event.time + " : " + <strong>${event.title}</strong> + " Created by " + event.creator + " - tag: " + tag;
                     
                     
                     if (event.permission == "limited"){

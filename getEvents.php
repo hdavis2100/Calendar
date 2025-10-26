@@ -38,7 +38,7 @@ for ($i=0; $i< count($json_obj); $i++) {
     $date = $year . '-' . $month . '-' . $day;
 
     // Grab event by username and date
-    $stmt = $mysqli->prepare("SELECT event_id, title, time, tag FROM events WHERE username=? AND date=?");
+    $stmt = $mysqli->prepare("SELECT event_id, title, time, tag, username FROM events WHERE username=? AND date=?");
     if(!$stmt){
         printf("Query Prep Failed: %s\n", $mysqli->error);
         exit;
@@ -57,11 +57,12 @@ for ($i=0; $i< count($json_obj); $i++) {
             "time" => $row['time'],
             "id" => $row['event_id'],
             "tag" => $row['tag'],
-            "permission" => "full"
+            "permission" => "full",
+            "creator" => $row['username']
         ));
     }
     $stmt->close();
-    $stmt = $mysqli->prepare("SELECT events.event_id, events.title, events.time, events.tag, refs.permission FROM events JOIN refs ON events.event_id=refs.event_id WHERE refs.username=? AND events.date=?");
+    $stmt = $mysqli->prepare("SELECT events.event_id, events.title, events.time, events.username, events.tag, refs.permission FROM events JOIN refs ON events.event_id=refs.event_id WHERE refs.username=? AND events.date=?");
     if(!$stmt){
         printf("Query Prep Failed: %s\n", $mysqli->error);
         exit;
@@ -79,7 +80,8 @@ for ($i=0; $i< count($json_obj); $i++) {
             "time" => $row['time'],
             "id" => $row['event_id'],
             "tag" => $row['tag'],
-            "permission" => $row['permission']
+            "permission" => $row['permission'],
+            "creator" => $row['username']
         ));
     }
 }
