@@ -327,7 +327,7 @@
                     let event = eventsByDate[cellDateKey][e];
                     let eventDiv = document.createElement("div");
                     let tag = event.tag;
-                    eventDiv.innerHTML = event.time + " : " + <strong>${event.title}</strong> + " Created by " + event.creator + " - tag: " + tag;
+                    eventDiv.innerHTML = event.time + " : " + event.title + " Created by " + event.creator + " - tag: " + tag;
                     
                     
                     if (event.permission == "limited"){
