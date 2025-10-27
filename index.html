@@ -249,7 +249,7 @@
                 let calItem = document.createElement("li");
 
                 // Indicate if viewing own calendar
-                calItem.textContent = user == username ? user + " (Your Calendar)" : user;
+                calItem.textContent = user == username ? user + " (Your Calendar)  " : user + "  ";
 
                 viewButton = document.createElement("button");
                 viewButton.textContent = "View";
@@ -271,7 +271,7 @@
             for (let user of Object.keys(userDict)){
                 let userItem = document.createElement("li");
                 let shareStatus = userDict[user];
-                userItem.textContent = user;
+                userItem.textContent = user + "  ";
                 let shareButton = document.createElement("button");
                 shareButton.textContent = shareStatus ? "Unshare" : "Share";
                 userItem.appendChild(shareButton);
