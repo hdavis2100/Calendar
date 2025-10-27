@@ -376,7 +376,7 @@
                                 permissionLevel = "none";
                             }
                             else {
-                                console.error("No permission level selected");
+                             
                                 return;
                             }
 
@@ -402,7 +402,7 @@
 
                         if (tag){
                             tagButton.addEventListener("click", function() {
-                                let data = { 'id': event.id, 'tag': null, 'token': token };
+                                let data = { 'id': event.id, 'tag': null, 'token':  token, 'creator': event.creator };
                                 fetch("tagEvent.php", {
                                     method: 'POST',
                                     body: JSON.stringify(data),
@@ -418,7 +418,7 @@
                             tagButton.addEventListener("click", function() {
 
 
-                                let data = { 'id': event.id, 'tag': document.getElementById("tagEvent").value, 'token': token };
+                                let data = { 'id': event.id, 'tag': document.getElementById("tagEvent").value, 'token': token, 'creator': event.creator };
                                 fetch("tagEvent.php", {
                                     method: 'POST',
                                     body: JSON.stringify(data),

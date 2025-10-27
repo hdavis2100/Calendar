@@ -5,7 +5,7 @@ ini_set("session.cookie_httponly", 1);
 session_start();
 if (!isset($_SESSION['username'])) {
     echo json_encode(array(
-        "events" => []
+        "success" => false,
     ));
 
     exit;
@@ -17,12 +17,34 @@ $event_id = $json_obj['id'];
 $tag = $json_obj['tag'];
 $username = $_SESSION['username'];
 $token = $json_obj['token'];
+$creator = $json_obj['creator'];
 if (!hash_equals($_SESSION['token'], $token)) {
     die("Request forgery detected");
 }
 
 require 'database.php';
 
+// Verify user has permission to tag event
+
+if ($username != $creator) {
+    $stmt = $mysqli->prepare("SELECT COUNT(*) FROM refs WHERE event_id=? AND username=?");
+    if(!$stmt){
+        printf("Query Prep Failed: %s\n", $mysqli->error);
+        exit;
+    }
+    $stmt->bind_param("is", $event_id, $username);
+    $stmt->execute();
+    $stmt->bind_result($count);
+    $stmt->fetch();
+    $stmt->close();
+
+    if ($count == 0) {
+        echo json_encode(array(
+            "success" => false
+        ));
+        exit;
+    }
+}
 
 // If tag is empty we are removing the tag, otherwise we are adding the tag
 if ($tag == "") {
@@ -31,7 +53,7 @@ if ($tag == "") {
         printf("Query Prep Failed: %s\n", $mysqli->error);
         exit;
     }
-    $stmt->bind_param("is", $event_id, $username);
+    $stmt->bind_param("is", $event_id, $creator);
     $stmt->execute();
     $stmt->close();
 } 
@@ -41,7 +63,7 @@ else {
         printf("Query Prep Failed: %s\n", $mysqli->error);
         exit;
     }
-    $stmt->bind_param("sis", $tag, $event_id, $username);
+    $stmt->bind_param("sis", $tag, $event_id, $creator);
     $stmt->execute();
     $stmt->close();
 }
