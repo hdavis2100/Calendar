@@ -405,7 +405,7 @@
 
                         if (tag){
                             tagButton.addEventListener("click", function() {
-                                let data = { 'id': event.id, 'tag': null, 'token':  token, 'creator': event.creator };
+                                let data = { 'id': event.id, 'tag': "", 'token':  token, 'creator': event.creator };
                                 fetch("tagEvent.php", {
                                     method: 'POST',
                                     body: JSON.stringify(data),
