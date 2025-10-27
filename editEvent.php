@@ -89,7 +89,7 @@ if ($username != $creator) {
     $stmt->bind_result($count);
     $stmt->fetch();
     $stmt->close();
-    if ($count === 0) {
+    if ($count == 0) {
         echo json_encode(array(
             "success" => false,
         ));
@@ -97,14 +97,14 @@ if ($username != $creator) {
     }
 
 }
-// Grab current event details to fill blank fields
-$stmt = $mysqli->prepare("SELECT title, date, time FROM events WHERE event_id=? AND username=?");
+// Grab current event details to fill blank fields. Valid user determined above by comparing session username to creator and references above.
+$stmt = $mysqli->prepare("SELECT title, date, time FROM events WHERE event_id=?");
 
 if(!$stmt){
     printf("Query Prep Failed: %s\n", $mysqli->error);
     exit;
 }
-$stmt->bind_param("is", $eventId, $username);
+$stmt->bind_param("i", $eventId);
 $stmt->execute();
 $stmt->bind_result($currentTitle, $currentDate, $currentTime);
 $stmt->fetch();
