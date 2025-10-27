@@ -57,7 +57,7 @@
 
     <!-- Form to add new event -->
     <div id="addEventForm" class="border">
-        <p> Add an Event: Your date must be in the format Year-Month-Date (ex: 2023-3-15, 20000-12-1), and your time must be in the military hour:minute format (ex: 14:30, 6:05). </p>
+        <h3> Add an Event: Your date must be in the format Year-Month-Date (ex: 2023-3-15, 20000-12-1), and your time must be in the military hour:minute format (ex: 14:30, 6:05). </h3>
     
         <label for="eventTitle">Event Title:</label>
         <input type="text" id="eventTitle" />
@@ -71,7 +71,7 @@
     </div>
     <!-- Form to add group member to event/update permissions -->
     <div id="groupForm" class="border">
-        <p> Add Group Member to event: Type the username of the member and select a permission level. Limited will allows members to only see the event while full will the same permissions as the creator except for deleting the full post. Option none will remove a member from the group. Only limited permissions members can be removed. Click the events Update Group button after filling the fields to add the member.</p>
+        <h3> Add Group Member to event: Type the username of the member and select a permission level. Limited will allows members to only see the event while full will the same permissions as the creator except for deleting the full post. Option none will remove a member from the group. Only limited permissions members can be removed. Click the events Update Group button after filling the fields to add the member.</h3>
         <label for="memberName">Member Name:</label>
         <input type="text" id="memberName" />
         <label for="permission">Permission Level:</label>
@@ -85,7 +85,7 @@
 
     <!-- Form to edit event details. Each event given edit button which pulls data from this form and updates by eventId on click-->
     <div id="editEventForm" class="border">
-        <p> Edit an Event: Enter Updated details below and click the event's edit button for your desired event to edit. If you want to leave a field unchanged, just leave it blank.</p>
+        <h3> Edit an Event: Enter Updated details below and click the event's edit button for your desired event to edit. If you want to leave a field unchanged, just leave it blank.</h3>
         <label for="editEventTitle">New Event Title:</label>
         <input type="text" id="editEventTitle" />
         <label for="editEventDate">New Event Date:</label>
@@ -96,12 +96,12 @@
 
     <!-- Form to tag events and filter by tag -->
     <div id="tagEventForm" class="border">
-        <p> Add an Event Tag: Enter the tag below and click the tag button on the event in your calendar.</p>
+        <h3> Add an Event Tag: Enter the tag below and click the tag button on the event in your calendar.</h3>
         <label for="tagEvent">Tag Event:</label>
         <input type="text" id="tagEvent" />
     </div>
     <div id="filterByTag" class="border">
-        <p> Enter a tag to only view events with that tag. If this field is not set all events are shown.</p>
+        <h3> Enter a tag to only view events with that tag. If this field is not set all events are shown.</h3>
         <label for="filterTag">Filter by Tag:</label>
         <input type="text" id="filterTag" />
         <button id="filterButton">Filter</button>

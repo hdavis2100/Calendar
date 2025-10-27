@@ -16,7 +16,10 @@ th {
     height: 20px;
 }
 .border {
-    border: 2px solid black;
+    border: 1px solid black;
     padding: 10px;
     margin-bottom: 20px;
+}
+#calendar {
+    margin: 20px;
 }
