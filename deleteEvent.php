@@ -31,13 +31,13 @@ $stmt->bind_result($eventUsername);
 $stmt->fetch();
 $stmt->close();
 
-// Delete event by event id
 
+// the creater does not have a reference
 if ($eventUsername != $username){
 
-    // Check if user has full permission
+    // Check if user has a reference to this event
 
-    $stmt = $mysqli->prepare("SELECT COUNT(*) FROM refs WHERE event_id=? AND username=? AND permission='full'");
+    $stmt = $mysqli->prepare("SELECT COUNT(*) FROM refs WHERE event_id=? AND username=?");
     if(!$stmt){
         printf("Query Prep Failed: %s\n", $mysqli->error);
         exit;
