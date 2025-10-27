@@ -1,3 +1,5 @@
+// Calendar helper from wiki
+
 (function () {
     Date.prototype.deltaDays = function (c) {
         return new Date(this.getFullYear(), this.getMonth(), this.getDate() + c);

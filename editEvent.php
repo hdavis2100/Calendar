@@ -78,6 +78,7 @@ else if ($newTime) {
 
 require 'database.php';
 
+// Get event creator username
 $stmt = $mysqli->prepare("SELECT username FROM events WHERE event_id=?");
 if(!$stmt){
     printf("Query Prep Failed: %s\n", $mysqli->error);

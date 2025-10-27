@@ -26,6 +26,7 @@ $username = $_SESSION['username'];
 
 require 'database.php';
 
+// Check if member to be added exists
 $stmt = $mysqli->prepare("SELECT COUNT(*) FROM users WHERE username=?");
 if(!$stmt){
     printf("Query Prep Failed: %s\n", $mysqli->error);
@@ -45,6 +46,8 @@ if ($count == 0) {
     ));
     exit;
 }
+
+// Get event creator username
 $stmt = $mysqli->prepare("SELECT username FROM events WHERE event_id=?");
 if(!$stmt){
     printf("Query Prep Failed: %s\n", $mysqli->error);
@@ -56,6 +59,8 @@ $stmt->execute();
 $stmt->bind_result($user);
 $stmt->fetch();
 $stmt->close();
+
+// Creator permissions cannot be changed
 if ($user == $memberName) {
     echo json_encode(array(
         "success" => false,
@@ -63,6 +68,7 @@ if ($user == $memberName) {
     exit;
 }
 
+// Verify user has permission to update event permissions. Reference does not exist for creator, so skip this case
 if($user != $username){
     $stmt = $mysqli->prepare("SELECT COUNT(*) FROM refs WHERE event_id=? AND username=? AND permission='full'");
     if(!$stmt){
@@ -82,6 +88,8 @@ if($user != $username){
         exit;
     }
 }
+
+// Delete existing reference if it exists
 $stmt = $mysqli->prepare("DELETE FROM refs WHERE username=? AND event_id=?");
 if(!$stmt){
     printf("Query Prep Failed: %s\n", $mysqli->error);
@@ -98,6 +106,8 @@ if ($permission == "none") {
     ));
     exit;
 }
+
+// Add new reference with specified permission
 $stmt = $mysqli->prepare("INSERT INTO refs (username, event_id, permission) VALUES (?, ?, ?)");
 if(!$stmt){
     printf("Query Prep Failed: %s\n", $mysqli->error);

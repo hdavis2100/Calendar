@@ -78,6 +78,8 @@ for ($i=0; $i< count($json_obj); $i++) {
         ));
     }
     $stmt->close();
+
+    // Get event information for referenced events on this date
     $stmt = $mysqli->prepare("SELECT events.event_id, events.title, events.time, events.username, events.tag, refs.permission FROM events JOIN refs ON events.event_id=refs.event_id WHERE refs.username=? AND events.date=?");
     if(!$stmt){
         printf("Query Prep Failed: %s\n", $mysqli->error);
@@ -104,6 +106,8 @@ for ($i=0; $i< count($json_obj); $i++) {
 
 
 $username = $_SESSION['username'];
+
+// Get all users and their share status with current user
 $stmt = $mysqli->prepare("SELECT username FROM users WHERE username!=?");
 if(!$stmt){
     printf("Query Prep Failed: %s\n", $mysqli->error);
@@ -113,11 +117,14 @@ $stmt->bind_param("s", $username);
 $stmt->execute();
 $result = $stmt->get_result();
 $users = array();
+
+// Initialize all users as not shared. Use dict for quick lookup
 while ($row = $result->fetch_assoc()) {
     $users[$row['username']] = false;
 }
 $stmt->close();
 
+// Update shared users to true
 $stmt = $mysqli->prepare("SELECT dest FROM shares WHERE source=?");
 if(!$stmt){
     printf("Query Prep Failed: %s\n", $mysqli->error);
@@ -131,6 +138,8 @@ while ($row = $result->fetch_assoc()) {
 }
 $stmt->close();
 
+
+// Get all users who have shared their calendar with current user
 $stmt = $mysqli->prepare("SELECT source FROM shares WHERE dest=?");
 if(!$stmt){
     printf("Query Prep Failed: %s\n", $mysqli->error);

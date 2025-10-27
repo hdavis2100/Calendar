@@ -7,6 +7,7 @@
 
 </head>
 <body>
+
     <div id="loginForm">
     <label for="usernameinput">Username:</label>
     <input type="text" name="username" id="usernameinput" />
@@ -27,9 +28,11 @@
     <label for="logoutButton">Logout:</label>
     <button id="logoutButton">Logout</button>
     </div>
-    
+
+    <!-- Month Navigation Buttons -->
     <button id="prev_month_btn">Previous Month</button>
     <button id="next_month_btn">Next Month</button>
+    
     <!-- Store Calendar as Grid -->
     <label id="calendarLabel" for="calendar"></label>
     <table id="calendar">
@@ -52,8 +55,9 @@
 
     </table>
 
+    <!-- Form to add new event -->
     <div id="addEventForm">
-        <p> Add an Event: Your date must be in the format Year-Month-Date (ex: 2023-3-15, 20000-12-1), and your time must be in the format hour:minute (ex: 14:30, 6:05)</p>
+        <p> Add an Event: Your date must be in the format Year-Month-Date (ex: 2023-3-15, 20000-12-1), and your time must be in the military hour:minute format (ex: 14:30, 6:05). </p>
     
         <label for="eventTitle">Event Title:</label>
         <input type="text" id="eventTitle" />
@@ -65,9 +69,9 @@
         <button id="addEventButton">Add Event</button>
 
     </div>
-
+    <!-- Form to add group member to event/update permissions -->
     <div id="groupForm">
-        <p> Add Group Member to event: Type the username of the member and select a permission level. Limited will allows members to only see the event while full will allow full permissions. None will remove members from the group. Only limited permissions members can be removed.</p>
+        <p> Add Group Member to event: Type the username of the member and select a permission level. Limited will allows members to only see the event while full will the same permissions as the creator except for deleting the full post. Option none will remove a member from the group. Only limited permissions members can be removed. Click the events Update Group button after filling the fields to add the member.</p>
         <label for="memberName">Member Name:</label>
         <input type="text" id="memberName" />
         <label for="permission">Permission Level:</label>
@@ -81,7 +85,7 @@
 
     <!-- Form to edit event details. Each event given edit button which pulls data from this form and updates by eventId on click-->
     <div id="editEventForm">
-        <p> Edit an Event: Enter Updated details below and click the edit button for your desired event to edit. If you want to leave a field unchanged, just leave it blank.</p>
+        <p> Edit an Event: Enter Updated details below and click the event's edit button for your desired event to edit. If you want to leave a field unchanged, just leave it blank.</p>
         <label for="editEventTitle">New Event Title:</label>
         <input type="text" id="editEventTitle" />
         <label for="editEventDate">New Event Date:</label>
@@ -89,39 +93,46 @@
         <label for="editEventTime">New Event Time:</label>
         <input type="text" id="editEventTime" />
         </div>
+
+    <!-- Form to tag events and filter by tag -->
     <div id="tagEventForm">
         <p> Add an Event Tag: Enter the tag below and click the tag button on the event in your calendar.</p>
         <label for="tagEvent">Tag Event:</label>
         <input type="text" id="tagEvent" />
     </div>
     <div id="filterByTag">
-        <p> Enter a tag to only view events with that tag:</p>
+        <p> Enter a tag to only view events with that tag. If this field is not set all events are shown.</p>
         <label for="filterTag">Filter by Tag:</label>
         <input type="text" id="filterTag" />
         <button id="filterButton">Filter</button>
     </div>
-        <div id="shareCal">
-            <h3> Click a user to share or unshare your calendar with them:</h3>
-            <ul id="userList">
-                
-            </ul>
-            
-        </div>
 
-        <div id="switchCalendar">
 
-            <h3> Click a user to view their calendar:</h3>
-            <p> Currently viewing: <span id="currentViewUser"></span></p>
-            <ul id="calendarList">
+    <!-- Section to share calendars with other users -->
+    <div id="shareCal">
+        <h3> Click a user to share or unshare your calendar with them:</h3>
+        <ul id="userList">
+            <!-- Populate in js -->
+        </ul>
+    </div>
+
+    <!-- Section to switch calendar views -->
+    <div id="switchCalendar">
+
+        <h3> Click a user to view their calendar:</h3>
+        <p> Currently viewing: <span id="currentViewUser"></span></p>
+        <ul id="calendarList">
+            <!-- Populate in js -->
                 
-            </ul>
-        </div>
+        </ul>
+    </div>
         
 
 <script src="calendarMin.js"></script>
 
 <script>
-        // For our purposes, we can keep the current month in a variable in the global scope
+    // For our purposes, we can keep the current month in a variable in the global scope
+    
     let currentMonth = new Month(new Date().getFullYear(), new Date().getMonth()); // Current month
     let token = "";
     let username = "";
@@ -131,10 +142,11 @@
 
     // Get event data from input and send to addEvent.php to store in database
     let addEvent = function() {
-        const title = document.getElementById("eventTitle").value;
-        const date = document.getElementById("eventDate").value;
-        const time = document.getElementById("eventTime").value;
-        const data = { 'title': title, 'date': date, 'time': time, 'token': token };
+        let title = document.getElementById("eventTitle").value;
+        let date = document.getElementById("eventDate").value;
+        let time = document.getElementById("eventTime").value;
+        let data = { 'title': title, 'date': date, 'time': time, 'token': token };
+        
         fetch("addEvent.php", {
             method: 'POST',
             body: JSON.stringify(data),
@@ -179,8 +191,8 @@
         if(!username){
             return;
         }
-        
-        document.getElementById("calendarLabel").innerText = (currentMonth.month + 1) + " " + currentMonth.year;
+
+        document.getElementById("calendarLabel").textContent = (currentMonth.month + 1) + " " + currentMonth.year;
         let weeks = currentMonth.getWeeks();
         let calBody = document.getElementById("calBody");
         calBody.innerHTML = ""; 
@@ -203,12 +215,17 @@
                 
                 // Dates are stored in the "val" format in database
                 val = days[d].getFullYear() + "-" + (days[d].getMonth()) + "-" + days[d].getDate();
+
+
+                // We will be accessing event info by key
                 eventsByDate[val] = [];
 
+                // Only request dates in the current month
                 if (days[d].getMonth() != currentMonth.month) {
                     continue;
                 }
 
+                // Easier php access when split
                 dates.push([days[d].getFullYear(), days[d].getMonth() + 1, days[d].getDate(), currView]);
                 
             }
@@ -230,11 +247,15 @@
             // Populate calendar list for switching views
             for (let user of data.views){
                 let calItem = document.createElement("li");
+
+                // Indicate if viewing own calendar
                 calItem.textContent = user == username ? user + " (Your Calendar)" : user;
+
                 viewButton = document.createElement("button");
                 viewButton.textContent = "View";
                 calendarList.appendChild(calItem);
                 calItem.appendChild(viewButton);
+                
                 // Switch calendar view on click
                 viewButton.addEventListener("click", function() {
                     currView = user === username ? "" : user;
@@ -245,6 +266,8 @@
 
             // Populate user list for sharing calendars
             userList.innerHTML = "";
+
+            // Iterate over keys in userDict and create list item for each user
             for (let user of Object.keys(userDict)){
                 let userItem = document.createElement("li");
                 let shareStatus = userDict[user];
@@ -252,6 +275,7 @@
                 let shareButton = document.createElement("button");
                 shareButton.textContent = shareStatus ? "Unshare" : "Share";
                 userItem.appendChild(shareButton);
+                
                 // Share or unshare calendar on click
                 shareButton.addEventListener("click", function() {
                     let data = { 'dest': user, 'shareStatus': shareStatus, 'token': token };
@@ -269,6 +293,7 @@
 
             }
 
+            // Show or hide event action forms based on current view/permissions
             if (currView === ""){
 
                         document.getElementById("editEventForm").hidden = false;
@@ -312,6 +337,8 @@
 
                 const cell = document.createElement("td");
                 cell.textContent = days[d].getDate();
+
+                // Recreate date key for lookup
                 let cellDateKey = days[d].getFullYear() + "-" + (days[d].getMonth()) + "-" + days[d].getDate();
                 if (eventsByDate[cellDateKey] === undefined) {
                     continue;
@@ -399,10 +426,11 @@
                         });
                         eventDiv.appendChild(groupButton);
 
-
+                        // Create tag button
                         let tagButton = document.createElement("button");
                         tagButton.textContent = tag ? "UnTag" : "Tag";
 
+                        // Add event listener for tag button
                         if (tag){
                             tagButton.addEventListener("click", function() {
                                 let data = { 'id': event.id, 'tag': "", 'token':  token, 'creator': event.creator };
@@ -438,9 +466,9 @@
                         
                         
                        
-                        
-                    
-                    
+
+
+                        // Create edit button
                         let editButton = document.createElement("button");
                         editButton.textContent = "Edit";
                         editButton.addEventListener("click", function() {
@@ -468,16 +496,17 @@
                         eventDiv.appendChild(editButton);
                         
                     }
-                    
-                    
+
+                    // Append event div to cell
                     cell.appendChild(eventDiv);
                 }
                 
                 
-                
+                // Append date cell to calendar
                 row.appendChild(cell);
                 
             }
+            // Append week row to calendar body
             calBody.appendChild(row);
         }
         })
@@ -486,13 +515,15 @@
     }
 
         
-        
-     let changeFilter = function() {
+    
+    // Change filter tag and update calendar
+    let changeFilter = function() {
         filter = document.getElementById("filterTag").value;
         updateCalendar();
      };   
      document.getElementById("filterButton").addEventListener("click", changeFilter);
     
+    // Set content based on login status
     let setContent = function() {
 
         // Reset current month on login/logout/refresh
@@ -574,6 +605,7 @@
     // Populate content on page load
     document.addEventListener("DOMContentLoaded", setContent, false);
 
+    // Handle login
     let login = function() {
         const username = document.getElementById("usernameinput").value;
         const password = document.getElementById("passwordinput").value;
@@ -591,7 +623,8 @@
         
 
     };
-    
+
+    // Handle account creation
     let createAccount = function() {
         const username = document.getElementById("createAccountUsername").value;
         const password = document.getElementById("createAccountPassword").value;
@@ -610,6 +643,7 @@
 
     };
 
+    // Handle logout
     let logout = function() {
         fetch("logout.php", {
             method: 'POST',

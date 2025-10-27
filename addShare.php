@@ -24,6 +24,26 @@ if (!hash_equals($_SESSION['token'], $token)) {
 
 require 'database.php';
 
+// Check if dest user exists (Should always exist from frontend input button format)
+$stmt = $mysqli->prepare("SELECT COUNT(*) FROM users WHERE username=?");
+if(!$stmt){
+    printf("Query Prep Failed: %s\n", $mysqli->error);
+    exit;
+}
+$stmt->bind_param('s', $dest);
+$stmt->execute();
+$stmt->bind_result($count);
+$stmt->fetch();
+$stmt->close();
+if ($count == 0) {
+    echo json_encode(array(
+        "success" => false,
+    ));
+    exit;
+}
+
+
+
 if (!$shareStatus) {
     // Add share into database
     $stmt = $mysqli->prepare("INSERT INTO shares (source, dest) VALUES (?, ?)");

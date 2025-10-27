@@ -23,6 +23,7 @@ if (!hash_equals($_SESSION['token'], $token)) {
 
 require 'database.php';
 
+// Get event creator username
 $stmt = $mysqli->prepare("SELECT username FROM events WHERE event_id=?");
 $stmt->bind_param("i", $eventId);
 $stmt->execute();
@@ -33,6 +34,8 @@ $stmt->close();
 // Delete event by event id
 
 if ($eventUsername != $username){
+
+    // Check if user has full permission
 
     $stmt = $mysqli->prepare("SELECT COUNT(*) FROM refs WHERE event_id=? AND username=? AND permission='full'");
     if(!$stmt){
@@ -50,8 +53,9 @@ if ($eventUsername != $username){
         ));
         exit;
     }
-    
 
+
+    // Delete reference to event for this user
     $stmt = $mysqli->prepare("DELETE FROM refs WHERE event_id=? AND username=?");
     if(!$stmt){
         printf("Query Prep Failed: %s\n", $mysqli->error);
@@ -65,6 +69,8 @@ if ($eventUsername != $username){
     ));
     exit();
 }
+
+// If the user is the creator, delete all references and then the event
 else{
 
 

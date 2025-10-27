@@ -24,6 +24,7 @@ if (!hash_equals($_SESSION['token'], $token)) {
 
 require 'database.php';
 
+// Tag must be alphanumeric and max 30 chars
 if (!preg_match('/^[A-Za-z0-9 ]{0,30}$/', $tag) && $tag != "") {
     echo json_encode(array(
         "success" => false,
@@ -31,6 +32,7 @@ if (!preg_match('/^[A-Za-z0-9 ]{0,30}$/', $tag) && $tag != "") {
     exit;
 }
 
+// Get event creator username
 $stmt = $mysqli->prepare("SELECT username FROM events WHERE event_id=?");
 if(!$stmt){
     printf("Query Prep Failed: %s\n", $mysqli->error);
@@ -41,6 +43,7 @@ $stmt->execute();
 $stmt->bind_result($creator);
 $stmt->fetch();
 $stmt->close();
+
 // Verify user has permission to tag event
 
 if ($username != $creator) {
