@@ -22,10 +22,25 @@ $views = array();
 
 require 'database.php';
 
-// For each date, get all events for that date
+// If viewing another user's calendar, verify permission
 if ($currView != "") {
+    $stmt = $mysqli->prepare("SELECT COUNT(*) FROM refs WHERE source=? AND dest=?");
+    $stmt->bind_param("ss", $username, $currView);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $stmt->bind_result($count);
+    $stmt->fetch();
+    $stmt->close();
+    if ($count == 0){
+        echo json_encode(array(
+            "success" => false
+        ));
+        exit;
+    }
+    else {
+        $username = $currView;
+    }
 
-    $username = $currView;
 }
 
 for ($i=0; $i< count($json_obj); $i++) {
