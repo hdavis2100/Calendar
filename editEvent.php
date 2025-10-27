@@ -17,7 +17,7 @@ $eventId = $json_obj['id'];
 $newTitle = $json_obj['newTitle'];
 $newDate = $json_obj['newDate'];
 $newTime = $json_obj['newTime'];
-$creator = $json_obj['creator'];
+
 
 $token = $json_obj['token'];
 if (!hash_equals($_SESSION['token'], $token)) {
@@ -77,6 +77,19 @@ else if ($newTime) {
 
 
 require 'database.php';
+
+$stmt = $mysqli->prepare("SELECT username FROM events WHERE event_id=?");
+if(!$stmt){
+    printf("Query Prep Failed: %s\n", $mysqli->error);
+    exit;
+}
+$stmt->bind_param("i", $eventId);
+$stmt->execute();
+$stmt->bind_result($creator);
+$stmt->fetch();
+$stmt->close();
+
+// Check if user is creator or has reference permission
 if ($username != $creator) {
 
     $stmt = $mysqli->prepare("SELECT COUNT(*) FROM refs WHERE event_id=? AND username=?");
