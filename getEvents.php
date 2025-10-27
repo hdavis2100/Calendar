@@ -27,10 +27,11 @@ if ($currView != "") {
     $stmt = $mysqli->prepare("SELECT COUNT(*) FROM shares WHERE source=? AND dest=?");
     $stmt->bind_param("ss", $username, $currView);
     $stmt->execute();
-    $result = $stmt->get_result();
+ 
     $stmt->bind_result($count);
     $stmt->fetch();
     $stmt->close();
+    
     if ($count == 0){
         echo json_encode(array(
             "success" => false
