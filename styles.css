@@ -23,3 +23,8 @@ th {
 #calendar {
     margin: 20px;
 }
+#userList, #calendarList{
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
