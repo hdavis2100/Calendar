@@ -64,26 +64,16 @@ if ($username != $creator) {
 }
 
 // If tag is empty we are removing the tag, otherwise we are adding the tag
-if ($tag == "") {
-    $stmt = $mysqli->prepare("UPDATE events SET tag=NULL WHERE event_id=? AND username=?");
-    if(!$stmt){
-        printf("Query Prep Failed: %s\n", $mysqli->error);
-        exit;
-    }
-    $stmt->bind_param("is", $event_id, $creator);
-    $stmt->execute();
-    $stmt->close();
-} 
-else {
-    $stmt = $mysqli->prepare("UPDATE events SET tag=? WHERE event_id=? AND username=?");
-    if(!$stmt){
-        printf("Query Prep Failed: %s\n", $mysqli->error);
-        exit;
-    }
-    $stmt->bind_param("sis", $tag, $event_id, $creator);
-    $stmt->execute();
-    $stmt->close();
+
+$stmt = $mysqli->prepare("UPDATE events SET tag=? WHERE event_id=? AND username=?");
+if(!$stmt){
+    printf("Query Prep Failed: %s\n", $mysqli->error);
+    exit;
 }
+$stmt->bind_param("sis", $tag, $event_id, $creator);
+$stmt->execute();
+$stmt->close();
+
 
 echo json_encode(array(
     "success" => true
