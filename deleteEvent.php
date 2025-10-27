@@ -49,14 +49,6 @@ if ($eventUsername != $username){
 }
 else{
 
-    $stmt = $mysqli->prepare("DELETE FROM events WHERE event_id=? AND username=?");
-    if(!$stmt){
-        printf("Query Prep Failed: %s\n", $mysqli->error);
-        exit;
-    }
-    $stmt->bind_param("is", $eventId, $username);
-    $stmt->execute();
-    $stmt->close();
 
     $stmt = $mysqli->prepare("DELETE FROM refs WHERE event_id=?");
     if(!$stmt){
@@ -65,6 +57,15 @@ else{
     }
 
     $stmt->bind_param("i", $eventId);
+    $stmt->execute();
+    $stmt->close();
+
+    $stmt = $mysqli->prepare("DELETE FROM events WHERE event_id=? AND username=?");
+    if(!$stmt){
+        printf("Query Prep Failed: %s\n", $mysqli->error);
+        exit;
+    }
+    $stmt->bind_param("is", $eventId, $username);
     $stmt->execute();
     $stmt->close();
 
