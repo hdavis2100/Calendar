@@ -327,7 +327,7 @@
                     let event = eventsByDate[cellDateKey][e];
                     let eventDiv = document.createElement("div");
                     let tag = event.tag;
-                    eventDiv.textContent = event.time + " : " + event.title + " Created by " + event.creator + " - tag: " + tag;
+                    eventDiv.textContent = "Start Time: " + event.time + ", Title: " + event.title + ", Created by: " + event.creator + ", Tag: " + tag + "Options:    ";
                     
 
                     if (currView === ""){
