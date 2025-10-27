@@ -357,6 +357,7 @@
                 for(let e in eventsByDate[cellDateKey]) {
                     let event = eventsByDate[cellDateKey][e];
                     let eventDiv = document.createElement("div");
+                    eventDiv.className = "border";
                     let tag = event.tag;
                     eventDiv.textContent = "Start Time: " + event.time + ", Title: " + event.title + ", Created by: " + event.creator + ", Tag: " + tag + ", Options:    ";
                     
