@@ -29,8 +29,20 @@ if (!preg_match('/^[A-Za-z0-9 ]{0,30}$/', $title) && $title) {
     exit;
 }
 
+
+
 // Date must be in year-month-day format
-if (!preg_match('/^[1-9]\d{1,}-[1-9]\d{0,1}-[1-9]\d{0,1}$/', $date) && $date) {
+if (preg_match('/^[1-9]\d{1,}-([1-9]\d{0,1})-([1-9]\d{0,1})$/', $date, $matches) && $date) {
+    $month = (int)$matches[1];
+    $day = (int)$matches[2];
+
+    if ($month < 1 || $month > 12 || $day < 1 || $day > 31) {
+        echo json_encode(array(
+            "success" => false,
+        ));
+        exit;
+    }
+} else if ($newDate) {
     echo json_encode(array(
         "success" => false,
     ));
@@ -38,7 +50,17 @@ if (!preg_match('/^[1-9]\d{1,}-[1-9]\d{0,1}-[1-9]\d{0,1}$/', $date) && $date) {
 }
 
 // Time must be in hour:minute format
-if (!preg_match('/^\d{1,2}:\d{2}$/', $time) && $time) {
+if (preg_match('/^(\d{1,2}):(\d{2})$/', $time, $matches) && $time) {
+    $hour = (int)$matches[1];
+    $minute = (int)$matches[2];
+    if ($hour < 0 || $hour > 23 || $minute < 0 || $minute > 59) {
+        echo json_encode(array(
+            "success" => false,
+        ));
+        exit;
+    }
+}
+else if ($newTime) {
     echo json_encode(array(
         "success" => false,
     ));

@@ -92,7 +92,7 @@ $stmt->close();
 // Check if user is creator or has reference permission
 if ($username != $creator) {
 
-    $stmt = $mysqli->prepare("SELECT COUNT(*) FROM refs WHERE event_id=? AND username=?");
+    $stmt = $mysqli->prepare("SELECT COUNT(*) FROM refs WHERE event_id=? AND username=? AND permission='full'");
     if(!$stmt){
         printf("Query Prep Failed: %s\n", $mysqli->error);
         exit;

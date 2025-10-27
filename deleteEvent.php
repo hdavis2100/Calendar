@@ -34,6 +34,24 @@ $stmt->close();
 
 if ($eventUsername != $username){
 
+    $stmt = $mysqli->prepare("SELECT COUNT(*) FROM refs WHERE event_id=? AND username=? AND permission='full'");
+    if(!$stmt){
+        printf("Query Prep Failed: %s\n", $mysqli->error);
+        exit;
+    }
+    $stmt->bind_param("is", $eventId, $username);
+    $stmt->execute();
+    $stmt->bind_result($count);
+    $stmt->fetch();
+    $stmt->close();
+    if ($count == 0) {
+        echo json_encode(array(
+            "success" => false
+        ));
+        exit;
+    }
+    
+
     $stmt = $mysqli->prepare("DELETE FROM refs WHERE event_id=? AND username=?");
     if(!$stmt){
         printf("Query Prep Failed: %s\n", $mysqli->error);

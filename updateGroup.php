@@ -38,7 +38,7 @@ $stmt->bind_result($count);
 $stmt->fetch();
 $stmt->close();
 
-if ($count === 0) {
+if ($count == 0) {
     echo json_encode(array(
         "success" => false,
         "message" => "User not found"
@@ -63,6 +63,25 @@ if ($user == $memberName) {
     exit;
 }
 
+if($user != $username){
+    $stmt = $mysqli->prepare("SELECT COUNT(*) FROM refs WHERE event_id=? AND username=? AND permission='full'");
+    if(!$stmt){
+        printf("Query Prep Failed: %s\n", $mysqli->error);
+        
+        exit;
+    }
+    $stmt->bind_param("is", $id, $username);
+    $stmt->execute();
+    $stmt->bind_result($count);
+    $stmt->fetch();
+    $stmt->close();
+    if ($count == 0) {
+        echo json_encode(array(
+            "success" => false,
+        ));
+        exit;
+    }
+}
 $stmt = $mysqli->prepare("DELETE FROM refs WHERE username=? AND event_id=?");
 if(!$stmt){
     printf("Query Prep Failed: %s\n", $mysqli->error);

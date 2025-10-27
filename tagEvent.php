@@ -17,17 +17,29 @@ $event_id = $json_obj['id'];
 $tag = $json_obj['tag'];
 $username = $_SESSION['username'];
 $token = $json_obj['token'];
-$creator = $json_obj['creator'];
+
 if (!hash_equals($_SESSION['token'], $token)) {
     die("Request forgery detected");
 }
 
 require 'database.php';
 
+
+
+$stmt = $mysqli->prepare("SELECT username FROM events WHERE event_id=?");
+if(!$stmt){
+    printf("Query Prep Failed: %s\n", $mysqli->error);
+    exit;
+}
+$stmt->bind_param("i", $event_id);
+$stmt->execute();
+$stmt->bind_result($creator);
+$stmt->fetch();
+$stmt->close();
 // Verify user has permission to tag event
 
 if ($username != $creator) {
-    $stmt = $mysqli->prepare("SELECT COUNT(*) FROM refs WHERE event_id=? AND username=?");
+    $stmt = $mysqli->prepare("SELECT COUNT(*) FROM refs WHERE event_id=? AND username=? AND permission='full'");
     if(!$stmt){
         printf("Query Prep Failed: %s\n", $mysqli->error);
         exit;
