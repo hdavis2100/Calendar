@@ -89,6 +89,25 @@ if($user != $username){
     }
 }
 
+// Verify member to be updated does not have full permission. Cannot change status of other individuals with full permission
+$stmt = $mysqli->prepare("SELECT COUNT(*) FROM refs WHERE event_id=? AND username=? AND permission='full'");
+if(!$stmt){
+    printf("Query Prep Failed: %s\n", $mysqli->error);
+    
+    exit;
+}
+$stmt->bind_param("is", $id, $memberName);
+$stmt->execute();
+
+$stmt->bind_result($count);
+$stmt->fetch();
+$stmt->close();
+if ($count > 0 && $memberName != $username) {
+    echo json_encode(array(
+        "success" => false,
+    ));
+    exit;
+}
 // Delete existing reference if it exists
 $stmt = $mysqli->prepare("DELETE FROM refs WHERE username=? AND event_id=?");
 if(!$stmt){
