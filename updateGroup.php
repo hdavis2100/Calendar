@@ -51,7 +51,7 @@ if(!$stmt){
     
     exit;
 }
-$stmt->bind_param("s", $id);
+$stmt->bind_param("i", $id);
 $stmt->execute();
 $stmt->bind_result($user);
 $stmt->fetch();
@@ -69,7 +69,7 @@ if(!$stmt){
     
     exit;
 }
-$stmt->bind_param("ss", $memberName, $id);
+$stmt->bind_param("si", $memberName, $id);
 $stmt->execute();
 $stmt->close();
 
@@ -85,7 +85,7 @@ if(!$stmt){
     
     exit;
 }
-$stmt->bind_param("sss", $memberName, $id, $permission);
+$stmt->bind_param("sis", $memberName, $id, $permission);
 $stmt->execute();
 $stmt->close();
 echo json_encode(array(
