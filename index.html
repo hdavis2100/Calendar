@@ -17,7 +17,7 @@
     </div>
 
     <div id="createAccountForm">
-    <label for="createAccount">Create Account:</label>
+    <label for="createAccountUsername">Create Account:</label>
     <input type="text" name="createAccountUsername" id="createAccountUsername" />
     <label for="createAccountPassword"> Password</label>
     <input type="password" name="createAccountPassword" id="createAccountPassword" />
@@ -34,7 +34,7 @@
     <button id="next_month_btn">Next Month</button>
     
     <!-- Store Calendar as Grid -->
-    <label id="calendarLabel" for="calendar"></label>
+    <h3 id="calendarLabel"></h3>
     <table id="calendar">
         <thead>
             <tr>
@@ -74,7 +74,7 @@
         <h3> Add Group Member to event: Type the username of the member and select a permission level. Limited will allows members to only see the event while full will the same permissions as the creator except for deleting the full post. Option none will remove a member from the group. Only limited permissions members can be removed. Click the events Update Group button after filling the fields to add the member.</h3>
         <label for="memberName">Member Name:</label>
         <input type="text" id="memberName" />
-        <label for="permission">Permission Level:</label>
+        <h3> Select Permission Level:</h3>
         <input type="radio" id="perLimited" name="permission" value="limited" />
         <label for="perLimited">Limited</label>
         <input type="radio" id="perFull" name="permission" value="full" />
