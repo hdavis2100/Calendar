@@ -346,7 +346,11 @@
 
                 // Sort events by time before displaying
                 eventsByDate[cellDateKey].sort( (a,b) => {
-                    return a.time.localeCompare(b.time);
+                    let m1 = a.match(/^(\d{1,2}):(\d{2})$/);
+                    let m2 = b.match(/^(\d{1,2}):(\d{2})$/);
+                    let time1 = m1[1] * 60 + m1[2];
+                    let time2 = m2[1] * 60 + m2[2];
+                    return time1 - time2;
                 });
 
                 // Create a div for each event along with delete and edit buttons
