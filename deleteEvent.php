@@ -39,7 +39,7 @@ if ($eventUsername != $username){
         printf("Query Prep Failed: %s\n", $mysqli->error);
         exit;
     }
-    $stmt->bind_param("is", $eventId, $username);;
+    $stmt->bind_param("is", $eventId, $username);
     $stmt->execute();
     $stmt->close();
     echo json_encode(array(
@@ -47,29 +47,31 @@ if ($eventUsername != $username){
     ));
     exit();
 }
+else{
 
-$stmt = $mysqli->prepare("DELETE FROM events WHERE event_id=? AND username=?");
-if(!$stmt){
-    printf("Query Prep Failed: %s\n", $mysqli->error);
-    exit;
+    $stmt = $mysqli->prepare("DELETE FROM events WHERE event_id=? AND username=?");
+    if(!$stmt){
+        printf("Query Prep Failed: %s\n", $mysqli->error);
+        exit;
+    }
+    $stmt->bind_param("is", $eventId, $username);
+    $stmt->execute();
+    $stmt->close();
+
+    $stmt = $mysqli->prepare("DELETE FROM refs WHERE event_id=?");
+    if(!$stmt){
+        printf("Query Prep Failed: %s\n", $mysqli->error);
+        exit;
+    }
+
+    $stmt->bind_param("i", $eventId);
+    $stmt->execute();
+    $stmt->close();
+
+    echo json_encode(array(
+        "success" => true
+    ));
+
+    exit();
 }
-$stmt->bind_param("is", $eventId, $username);
-$stmt->execute();
-$stmt->close();
-
-$stmt = $mysqli->prepare("DELETE FROM refs WHERE event_id=?");
-if(!$stmt){
-    printf("Query Prep Failed: %s\n", $mysqli->error);
-    exit;
-}
-
-$stmt->bind_param("i", $eventId);
-$stmt->execute();
-$stmt->close();
-
-echo json_encode(array(
-    "success" => true
-));
-
-exit();
 ?>
