@@ -24,7 +24,7 @@ require 'database.php';
 
 // If viewing another user's calendar, verify permission
 if ($currView != "") {
-    $stmt = $mysqli->prepare("SELECT COUNT(*) FROM refs WHERE source=? AND dest=?");
+    $stmt = $mysqli->prepare("SELECT COUNT(*) FROM shares WHERE source=? AND dest=?");
     $stmt->bind_param("ss", $username, $currView);
     $stmt->execute();
     $result = $stmt->get_result();
