@@ -24,7 +24,12 @@ if (!hash_equals($_SESSION['token'], $token)) {
 
 require 'database.php';
 
-
+if (!preg_match('/^[A-Za-z0-9 ]{0,30}$/', $tag) && $tag != "") {
+    echo json_encode(array(
+        "success" => false,
+    ));
+    exit;
+}
 
 $stmt = $mysqli->prepare("SELECT username FROM events WHERE event_id=?");
 if(!$stmt){

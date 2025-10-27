@@ -28,6 +28,8 @@
     <button id="logoutButton">Logout</button>
     </div>
     
+    <button id="prev_month_btn">Previous Month</button>
+    <button id="next_month_btn">Next Month</button>
     <!-- Store Calendar as Grid -->
     <label id="calendarLabel" for="calendar"></label>
     <table id="calendar">
@@ -46,8 +48,7 @@
             <!-- Populate in js -->
             
         </tbody>
-        <button id="prev_month_btn">Previous Month</button>
-        <button id="next_month_btn">Next Month</button>
+        
 
     </table>
 
@@ -116,8 +117,7 @@
             </ul>
         </div>
         
-</body>
-</html>
+
 <script src="calendarMin.js"></script>
 
 <script>
@@ -230,15 +230,15 @@
             // Populate calendar list for switching views
             for (let user of data.views){
                 let calItem = document.createElement("li");
-                calItem.innerText = user == username ? user + " (Your Calendar)" : user;
+                calItem.textContent = user == username ? user + " (Your Calendar)" : user;
                 viewButton = document.createElement("button");
-                viewButton.innerText = "View";
+                viewButton.textContent = "View";
                 calendarList.appendChild(calItem);
                 calItem.appendChild(viewButton);
                 // Switch calendar view on click
                 viewButton.addEventListener("click", function() {
                     currView = user === username ? "" : user;
-                    document.getElementById("currentViewUser").innerText = currView == "" ? "Your Calendar" : currView;
+                    document.getElementById("currentViewUser").textContent = currView == "" ? "Your Calendar" : currView;
                     updateCalendar();
                 }, false);
             }
@@ -248,9 +248,9 @@
             for (let user of Object.keys(userDict)){
                 let userItem = document.createElement("li");
                 let shareStatus = userDict[user];
-                userItem.innerText = user;
+                userItem.textContent = user;
                 let shareButton = document.createElement("button");
-                shareButton.innerText = shareStatus ? "Unshare" : "Share";
+                shareButton.textContent = shareStatus ? "Unshare" : "Share";
                 userItem.appendChild(shareButton);
                 // Share or unshare calendar on click
                 shareButton.addEventListener("click", function() {
@@ -311,7 +311,7 @@
             for(let d in days){
 
                 const cell = document.createElement("td");
-                cell.innerText = days[d].getDate();
+                cell.textContent = days[d].getDate();
                 let cellDateKey = days[d].getFullYear() + "-" + (days[d].getMonth()) + "-" + days[d].getDate();
                 if (eventsByDate[cellDateKey] === undefined) {
                     continue;
@@ -327,13 +327,13 @@
                     let event = eventsByDate[cellDateKey][e];
                     let eventDiv = document.createElement("div");
                     let tag = event.tag;
-                    eventDiv.innerHTML = event.time + " : " + event.title + " Created by " + event.creator + " - tag: " + tag;
+                    eventDiv.textContent = event.time + " : " + event.title + " Created by " + event.creator + " - tag: " + tag;
                     
 
                     if (currView === ""){
                         // Delete button always attached so users can delete references
                         let delButton = document.createElement("button");
-                        delButton.innerText = "Delete";
+                        delButton.textContent = "Delete";
                             
                         // Delete and update by stored event id
                         delButton.addEventListener("click", function() {
@@ -363,7 +363,7 @@
                     if (currView === ""){
 
                         let groupButton = document.createElement("button");
-                        groupButton.innerText = "Update Group";
+                        groupButton.textContent = "Update Group";
                         groupButton.addEventListener("click", function() {
 
                             // Get new group member and permission level from inputs
@@ -401,7 +401,7 @@
 
 
                         let tagButton = document.createElement("button");
-                        tagButton.innerText = tag ? "UnTag" : "Tag";
+                        tagButton.textContent = tag ? "UnTag" : "Tag";
 
                         if (tag){
                             tagButton.addEventListener("click", function() {
@@ -442,7 +442,7 @@
                     
                     
                         let editButton = document.createElement("button");
-                        editButton.innerText = "Edit";
+                        editButton.textContent = "Edit";
                         editButton.addEventListener("click", function() {
 
                             // Get new event fields from edit event inputs
@@ -534,7 +534,7 @@
                 token = data.token;
                 username = data.username;
 
-                currViewUser.innerText = "Your Calendar";
+                currViewUser.textContent = "Your Calendar";
 
             }
             else {
@@ -633,3 +633,5 @@
     
 
 </script>
+</body>
+</html>
