@@ -17,7 +17,7 @@ $eventId = $json_obj['id'];
 $newTitle = $json_obj['newTitle'];
 $newDate = $json_obj['newDate'];
 $newTime = $json_obj['newTime'];
-$tag = $json_obj['tag'];
+$creator = $json_obj['creator'];
 
 $token = $json_obj['token'];
 if (!hash_equals($_SESSION['token'], $token)) {
@@ -40,7 +40,7 @@ if (!preg_match('/^[A-Za-z0-9 ]{0,30}$/', $newTitle) && $newTitle) {
 
 
 // Date must be in year-month-day format
-if (preg_match('/^[1-9]\d{1,}-([1-9]\d{0,1})-([1-9]\d{0,1})$/', $newDate, $matches)) {
+if (preg_match('/^[1-9]\d{1,}-([1-9]\d{0,1})-([1-9]\d{0,1})$/', $newDate, $matches) && $newDate) {
     $month = (int)$matches[1];
     $day = (int)$matches[2];
 
@@ -77,7 +77,26 @@ else if ($newTime) {
 
 
 require 'database.php';
+if ($username != $creator) {
 
+    $stmt = $mysqli->prepare("SELECT COUNT(*) FROM refs WHERE event_id=? AND username=?");
+    if(!$stmt){
+        printf("Query Prep Failed: %s\n", $mysqli->error);
+        exit;
+    }
+    $stmt->bind_param("is", $eventId, $username);
+    $stmt->execute();
+    $stmt->bind_result($count);
+    $stmt->fetch();
+    $stmt->close();
+    if ($count === 0) {
+        echo json_encode(array(
+            "success" => false,
+        ));
+        exit;
+    }
+
+}
 // Grab current event details to fill blank fields
 $stmt = $mysqli->prepare("SELECT title, date, time FROM events WHERE event_id=? AND username=?");
 
@@ -105,29 +124,18 @@ if (!$newTime) {
     $newTime = $currentTime;
 }
 
-$stmt = $mysqli->prepare("SELECT event_id FROM events WHERE date=? AND time=? AND title=? AND tag=?");
-if(!$stmt){
-    printf("Query Prep Failed: %s\n", $mysqli->error);
-    exit;
-}
-$ids = array();
-$stmt->bind_param("ssss", $newDate, $newTime, $newTitle, $tag);
-$stmt->execute();
-$stmt->bind_result($id);
-while ($stmt->fetch()) {
-    array_push($ids, $id);
-}
-$stmt->close();
+
 
 
 
 // Update events by event id
+// We verify ownership or group membership earlier via checking reference and session username equals creator username
 $stmt = $mysqli->prepare("UPDATE events SET title=?, date=?, time=? WHERE event_id=?");
 if (!$stmt) {
     printf("Query Prep Failed: %s\n", $mysqli->error);
     exit;
 }
-$stmt->bind_param("sssis", $newTitle, $newDate, $newTime, $eventId, $username);
+$stmt->bind_param("sssi", $newTitle, $newDate, $newTime, $eventId);
 $stmt->execute();
 $stmt->close();
 

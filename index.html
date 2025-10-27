@@ -449,7 +449,7 @@
                             const newTime = document.getElementById("editEventTime").value;
 
                             // Blank fields handled in editEvent.php
-                            let data = { 'id': event.id, 'newTitle': newTitle,  'newDate': newDate, 'newTime': newTime, 'token': token, 'tag': event.tag };
+                            let data = { 'id': event.id, 'newTitle': newTitle,  'newDate': newDate, 'newTime': newTime, 'token': token, 'creator': event.creator };
                             fetch("editEvent.php", {
                                 method: 'POST',
                                 body: JSON.stringify(data),
