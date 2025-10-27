@@ -56,7 +56,7 @@
     </table>
 
     <!-- Form to add new event -->
-    <div id="addEventForm">
+    <div id="addEventForm" class="border">
         <p> Add an Event: Your date must be in the format Year-Month-Date (ex: 2023-3-15, 20000-12-1), and your time must be in the military hour:minute format (ex: 14:30, 6:05). </p>
     
         <label for="eventTitle">Event Title:</label>
@@ -70,7 +70,7 @@
 
     </div>
     <!-- Form to add group member to event/update permissions -->
-    <div id="groupForm">
+    <div id="groupForm" class="border">
         <p> Add Group Member to event: Type the username of the member and select a permission level. Limited will allows members to only see the event while full will the same permissions as the creator except for deleting the full post. Option none will remove a member from the group. Only limited permissions members can be removed. Click the events Update Group button after filling the fields to add the member.</p>
         <label for="memberName">Member Name:</label>
         <input type="text" id="memberName" />
@@ -84,7 +84,7 @@
     </div>
 
     <!-- Form to edit event details. Each event given edit button which pulls data from this form and updates by eventId on click-->
-    <div id="editEventForm">
+    <div id="editEventForm" class="border">
         <p> Edit an Event: Enter Updated details below and click the event's edit button for your desired event to edit. If you want to leave a field unchanged, just leave it blank.</p>
         <label for="editEventTitle">New Event Title:</label>
         <input type="text" id="editEventTitle" />
@@ -95,12 +95,12 @@
         </div>
 
     <!-- Form to tag events and filter by tag -->
-    <div id="tagEventForm">
+    <div id="tagEventForm" class="border">
         <p> Add an Event Tag: Enter the tag below and click the tag button on the event in your calendar.</p>
         <label for="tagEvent">Tag Event:</label>
         <input type="text" id="tagEvent" />
     </div>
-    <div id="filterByTag">
+    <div id="filterByTag" class="border">
         <p> Enter a tag to only view events with that tag. If this field is not set all events are shown.</p>
         <label for="filterTag">Filter by Tag:</label>
         <input type="text" id="filterTag" />
@@ -109,7 +109,7 @@
 
 
     <!-- Section to share calendars with other users -->
-    <div id="shareCal">
+    <div id="shareCal" class="border">
         <h3> Click a user to share or unshare your calendar with them:</h3>
         <ul id="userList">
             <!-- Populate in js -->
@@ -117,7 +117,7 @@
     </div>
 
     <!-- Section to switch calendar views -->
-    <div id="switchCalendar">
+    <div id="switchCalendar" class="border">
 
         <h3> Click a user to view their calendar:</h3>
         <p> Currently viewing: <span id="currentViewUser"></span></p>
